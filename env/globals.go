@@ -2,9 +2,23 @@ package env
 
 import (
 	"encoding"
+	"flag"
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/negrel/configue/option"
+)
+
+// ErrorHandling defines how [EnvSet.Parse] behaves if the parse fails.
+type ErrorHandling = flag.ErrorHandling
+
+// These constants cause [EnvSet.Parse] to behave as described if the parse
+// fails.
+const (
+	ContinueOnError ErrorHandling = flag.ContinueOnError // Return a descriptive error.
+	ExitOnError                   = flag.ExitOnError     // Call os.Exit(2).
+	PanicOnError                  = flag.PanicOnError    // Call panic with a descriptive error.
 )
 
 var (
@@ -120,17 +134,17 @@ func UnquoteUsage(envvar *EnvVar) (name string, usage string) {
 	// No explicit name, so use type if we can find one.
 	name = "value"
 	switch envvar.Value.(type) {
-	case *boolValue:
+	case *option.Bool:
 		name = ""
-	case *durationValue:
+	case *option.Duration:
 		name = "duration"
-	case *float64Value:
+	case *option.Float64:
 		name = "float"
-	case *intValue, *int64Value:
+	case *option.Int, *option.Int64:
 		name = "int"
-	case *stringValue:
+	case *option.String:
 		name = "string"
-	case *uintValue, *uint64Value:
+	case *option.Uint, *option.Uint64:
 		name = "uint"
 	}
 	return
@@ -146,7 +160,7 @@ func Bool(name string, value bool, usage string) *bool {
 // BoolVar defines a bool env var with specified name, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the env var.
 func BoolVar(p *bool, name string, value bool, usage string) {
-	CommandLine.Var(newBoolValue(value, p), name, usage)
+	CommandLine.Var(option.NewBool(value, p), name, usage)
 }
 
 // Int defines an int env var with specified name, default value, and usage string.
@@ -158,7 +172,7 @@ func Int(name string, value int, usage string) *int {
 // IntVar defines an int env var with specified name, default value, and usage string.
 // The argument p points to an int variable in which to store the value of the env var.
 func IntVar(p *int, name string, value int, usage string) {
-	CommandLine.Var(newIntValue(value, p), name, usage)
+	CommandLine.Var(option.NewInt(value, p), name, usage)
 }
 
 // Int64 defines an int64 env var with specified name, default value, and usage string.
@@ -170,7 +184,7 @@ func Int64(name string, value int64, usage string) *int64 {
 // Int64Var defines an int64 env var with specified name, default value, and usage string.
 // The argument p points to an int64 variable in which to store the value of the env var.
 func Int64Var(p *int64, name string, value int64, usage string) {
-	CommandLine.Var(newInt64Value(value, p), name, usage)
+	CommandLine.Var(option.NewInt64(value, p), name, usage)
 }
 
 // Uint defines a uint env var with specified name, default value, and usage string.
@@ -182,7 +196,7 @@ func Uint(name string, value uint, usage string) *uint {
 // UintVar defines a uint env var with specified name, default value, and usage string.
 // The argument p points to a uint variable in which to store the value of the env var.
 func UintVar(p *uint, name string, value uint, usage string) {
-	CommandLine.Var(newUintValue(value, p), name, usage)
+	CommandLine.Var(option.NewUint(value, p), name, usage)
 }
 
 // Uint64 defines a uint64 env var with specified name, default value, and usage string.
@@ -194,7 +208,7 @@ func Uint64(name string, value uint64, usage string) *uint64 {
 // Uint64Var defines a uint64 env var with specified name, default value, and usage string.
 // The argument p points to a uint64 variable in which to store the value of the env var.
 func Uint64Var(p *uint64, name string, value uint64, usage string) {
-	CommandLine.Var(newUint64Value(value, p), name, usage)
+	CommandLine.Var(option.NewUint64(value, p), name, usage)
 }
 
 // String defines a string env var with specified name, default value, and usage string.
@@ -206,7 +220,7 @@ func String(name string, value string, usage string) *string {
 // StringVar defines a string env var with specified name, default value, and usage string.
 // The argument p points to a string variable in which to store the value of the env var.
 func StringVar(p *string, name string, value string, usage string) {
-	CommandLine.Var(newStringValue(value, p), name, usage)
+	CommandLine.Var(option.NewString(value, p), name, usage)
 }
 
 // Float64 defines a float64 env var with specified name, default value, and usage string.
@@ -218,7 +232,7 @@ func Float64(name string, value float64, usage string) *float64 {
 // Float64Var defines a float64 env var with specified name, default value, and usage string.
 // The argument p points to a float64 variable in which to store the value of the env var.
 func Float64Var(p *float64, name string, value float64, usage string) {
-	CommandLine.Var(newFloat64Value(value, p), name, usage)
+	CommandLine.Var(option.NewFloat64(value, p), name, usage)
 }
 
 // Duration defines a time.Duration env var with specified name, default value, and usage string.
@@ -232,7 +246,7 @@ func Duration(name string, value time.Duration, usage string) *time.Duration {
 // The argument p points to a time.Duration variable in which to store the value of the env var.
 // The env var accepts a value acceptable to time.ParseDuration.
 func DurationVar(p *time.Duration, name string, value time.Duration, usage string) {
-	CommandLine.Var(newDurationValue(value, p), name, usage)
+	CommandLine.Var(option.NewDuration(value, p), name, usage)
 }
 
 // TextVar defines a env var with a specified name, default value, and usage string.
@@ -241,7 +255,7 @@ func DurationVar(p *time.Duration, name string, value time.Duration, usage strin
 // If the env var is used, the env var value will be passed to p's UnmarshalText method.
 // The type of the default value must be the same as the type of p.
 func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshaler, usage string) {
-	CommandLine.Var(newTextValue(value, p), name, usage)
+	CommandLine.Var(option.NewText(value, p), name, usage)
 }
 
 // Var defines an env var with the specified name and usage string. The type and
@@ -250,6 +264,6 @@ func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshal
 // caller could create a env var that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of [Value]; in particular, [Set] would
 // decompose the comma-separated string into the slice.
-func Var(value Value, name string, usage string) {
+func Var(value option.Value, name string, usage string) {
 	CommandLine.Var(value, name, usage)
 }

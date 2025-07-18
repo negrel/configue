@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"slices"
 	"strings"
+
+	"github.com/negrel/configue/option"
 )
 
 // isZeroValue determines whether the string represents the zero
@@ -31,7 +33,7 @@ func isZeroValue(envvar *EnvVar, value string) (ok bool, err error) {
 			err = fmt.Errorf("panic calling String method on zero %v for env var %s: %v", typ, envvar.Name, e)
 		}
 	}()
-	return value == z.Interface().(Value).String(), nil
+	return value == z.Interface().(option.Value).String(), nil
 }
 
 func sortEnvVars(envVars map[string]*EnvVar) []*EnvVar {
