@@ -54,7 +54,7 @@ func NewEnv(prefix string) Backend {
 		} else {
 			_, _ = fmt.Fprintln(eb.Output(), "Environment variables:")
 		}
-		eb.PrintDefaults()
+		eb.EnvSet.PrintDefaults()
 	}
 	return eb
 }
@@ -90,6 +90,11 @@ func (eb *envBackend) Visit(fn func(string, option.Value)) {
 	})
 }
 
+// PrintDefaults implements Backend.
+func (eb *envBackend) PrintDefaults() {
+	eb.Usage()
+}
+
 type flagBackend struct {
 	*flag.FlagSet
 	nameMap map[string]string
@@ -104,7 +109,7 @@ func NewFlag() Backend {
 		} else {
 			_, _ = fmt.Fprintln(fb.Output(), "Flags:")
 		}
-		fb.PrintDefaults()
+		fb.FlagSet.PrintDefaults()
 	}
 	return fb
 }
@@ -138,4 +143,9 @@ func (fb *flagBackend) Visit(fn func(string, option.Value)) {
 	fb.FlagSet.Visit(func(flag *flag.Flag) {
 		fn(fb.nameMap[flag.Name], flag.Value)
 	})
+}
+
+// PrintDefaults implements Backend.
+func (fb *flagBackend) PrintDefaults() {
+	fb.Usage()
 }

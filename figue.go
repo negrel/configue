@@ -71,11 +71,6 @@ func (f *Figue) Parse() error {
 }
 
 func (f *Figue) defaultUsage() {
-	if f.name != "" {
-		_, _ = fmt.Fprintln(f.Output(), "Usage of", f.name)
-	} else {
-		_, _ = fmt.Fprintln(f.Output(), "Usage:")
-	}
 	f.PrintDefaults()
 }
 
@@ -83,7 +78,8 @@ func (f *Figue) defaultUsage() {
 // default values of all defined command-line options. See the
 // documentation for the global function PrintDefaults for more information.
 func (f *Figue) PrintDefaults() {
-	for _, b := range f.backends {
+	for i := len(f.backends) - 1; i >= 0; i-- {
+		b := f.backends[i]
 		b.PrintDefaults()
 		_, _ = fmt.Fprintln(f.Output())
 	}
