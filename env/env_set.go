@@ -1,7 +1,6 @@
 package env
 
 import (
-	"encoding"
 	"errors"
 	"fmt"
 	"io"
@@ -9,7 +8,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/negrel/configue/option"
 )
@@ -56,145 +54,6 @@ type EnvSet struct {
 func (es *EnvSet) Init(name string, errorHandling ErrorHandling) {
 	es.name = name
 	es.errorHandling = errorHandling
-}
-
-// Bool defines a bool env var with specified name, default value, and usage
-// string. The return value is the address of a bool variable that stores the
-// value of the env var.
-func (es *EnvSet) Bool(name string, value bool, usage string) *bool {
-	b := new(bool)
-	es.BoolVar(b, name, value, usage)
-	return b
-}
-
-// BoolVar defines a bool env var with specified name, default value, and usage
-// string.
-// The argument p points to a bool variable in which to store the value of the
-// env var.
-func (es *EnvSet) BoolVar(p *bool, name string, value bool, usage string) {
-	es.Var(option.NewBool(value, p), name, usage)
-}
-
-// Duration defines a time.Duration env var with specified name, default value, and
-// usage string. The return value is the address of a time.Duration variable
-// that stores the value of the environment variable. The env var accepts a value
-// acceptable to time.ParseDuration.
-func (es *EnvSet) Duration(name string, value time.Duration, usage string) *time.Duration {
-	d := new(time.Duration)
-	es.DurationVar(d, name, value, usage)
-	return d
-}
-
-// DurationVar defines a time.Duration env var with specified name, default value,
-// and usage string. The argument p points to a time.Duration variable in which
-// to store the value of the env var. The env var accepts a value acceptable to
-// time.ParseDuration.
-func (es *EnvSet) DurationVar(p *time.Duration, name string, value time.Duration, usage string) {
-	es.Var(option.NewDuration(value, p), name, usage)
-}
-
-// Float64 defines a float64 env var with specified name, default value, and usage
-// string. The return value is the address of a float64 variable that stores the
-// value of the env var.
-func (es *EnvSet) Float64(name string, value float64, usage string) *float64 {
-	f := new(float64)
-	es.Float64Var(f, name, value, usage)
-	return f
-}
-
-// Float64Var defines a float64 env var with specified name, default value, and
-// usage string. The argument p points to a float64 variable in which to store
-// the value of the env var.
-func (es *EnvSet) Float64Var(p *float64, name string, value float64, usage string) {
-	es.Var(option.NewFloat64(value, p), name, usage)
-}
-
-// Int defines an int env var with specified name, default value, and usage
-// string. The return value is the address of an int variable that stores the
-// value of the env var.
-func (es *EnvSet) Int(name string, value int, usage string) *int {
-	i := new(int)
-	es.IntVar(i, name, value, usage)
-	return i
-}
-
-// IntVar defines an int env var with specified name, default value, and usage
-// string. The argument p points to an int variable in which to store the value
-// of the env var.
-func (es *EnvSet) IntVar(p *int, name string, value int, usage string) {
-	es.Var(option.NewInt(value, p), name, usage)
-}
-
-// Int64 defines an int64 env var with specified name, default value, and usage
-// string. The return value is the address of an int64 variable that stores the
-// value of the env var.
-func (es *EnvSet) Int64(name string, value int64, usage string) *int64 {
-	i := new(int64)
-	es.Int64Var(i, name, value, usage)
-	return i
-}
-
-// Int64Var defines an int64 env var with specified name, default value, and
-// usage string. The argument p points to an int64 variable in which to store
-// the value of the env var.
-func (es *EnvSet) Int64Var(p *int64, name string, value int64, usage string) {
-	es.Var(option.NewInt64(value, p), name, usage)
-}
-
-// String defines a string env var with specified name, default value, and usage
-// string. The return value is the address of a string variable that stores the
-// value of the env var.
-func (es *EnvSet) String(name string, value string, usage string) *string {
-	i := new(string)
-	es.StringVar(i, name, value, usage)
-	return i
-}
-
-// StringVar defines a string env var with specified name, default value, and
-// usage string. The argument p points to a string variable in which to store
-// the value of the env var.
-func (es *EnvSet) StringVar(p *string, name string, value string, usage string) {
-	es.Var(option.NewString(value, p), name, usage)
-}
-
-// TextVar defines an env var with a specified name, default value, and usage
-// string. The argument p must be a pointer to a variable that will hold the
-// value of the env var, and p must implement encoding.TextUnmarshaler. If the
-// env var is used, the env var value will be passed to p's UnmarshalText
-// method. The type of the default value must be the same as the type of p.
-func (es *EnvSet) TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshaler, usage string) {
-	es.Var(option.NewText(value, p), name, usage)
-}
-
-// Uint defines a uint env var with specified name, default value, and usage
-// string. The return value is the address of a uint variable that stores the
-// value of the env var.
-func (es *EnvSet) Uint(name string, value uint, usage string) *uint {
-	u := new(uint)
-	es.UintVar(u, name, value, usage)
-	return u
-}
-
-// UintVar defines a uint env var with specified name, default value, and usage
-// string. The argument p points to a uint variable in which to store the value of the env var.
-func (es *EnvSet) UintVar(p *uint, name string, value uint, usage string) {
-	es.Var(option.NewUint(value, p), name, usage)
-}
-
-// Uint64 defines a uint64 env var with specified name, default value, and usage
-// string. The return value is the address of a uint64 variable that stores the
-// value of the env var.
-func (es *EnvSet) Uint64(name string, value uint64, usage string) *uint64 {
-	u := new(uint64)
-	es.Uint64Var(u, name, value, usage)
-	return u
-}
-
-// Uint64Var defines a uint64 env var with specified name, default value, and
-// usage string. The argument p points to a uint64 variable in which to store
-// the value of the env var.
-func (es *EnvSet) Uint64Var(p *uint64, name string, value uint64, usage string) {
-	es.Var(option.NewUint64(value, p), name, usage)
 }
 
 // Var defines an environment variable with the specified name and usage string.
@@ -381,7 +240,7 @@ func (es *EnvSet) PrintDefaults() {
 	es.VisitAll(func(envVar *EnvVar) {
 		var b strings.Builder
 		fmt.Fprintf(&b, "  %s", envVar.Name)
-		name, usage := UnquoteUsage(envVar)
+		name, usage := UnquoteUsage(envVar.Value, envVar.Usage)
 		if len(name) > 0 {
 			b.WriteString(" ")
 			b.WriteString(name)
@@ -432,8 +291,8 @@ func (es *EnvSet) Visit(fn func(*EnvVar)) {
 	}
 }
 
-// Output returns the destination for usage and error messages. [os.Stderr] is returned if
-// output was not set or was set to nil.
+// Output returns the destination for usage and error messages. [os.Stderr] is
+// returned if output was not set or was set to nil.
 func (es *EnvSet) Output() io.Writer {
 	if es.output == nil {
 		return os.Stderr
@@ -452,8 +311,8 @@ func (es *EnvSet) SetOutput(output io.Writer) {
 	es.output = output
 }
 
-// Lookup returns the [EnvVar] structure of the named env var, returning nil if none
-// exists.
+// Lookup returns the [EnvVar] structure of the named env var, returning nil if
+// none exists.
 func (es *EnvSet) Lookup(name string) *EnvVar {
 	return es.formal[name]
 }

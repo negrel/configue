@@ -1,4 +1,4 @@
-package env
+package configue
 
 import (
 	"flag"
@@ -21,7 +21,7 @@ var (
 	// CommandLine is the default set of command-line env vars, parsed from
 	// os.Environ. The top-level functions such as BoolVar, Arg, and so on are
 	// wrappers for the methods of CommandLine.
-	CommandLine = NewEnvSet("", ExitOnError)
+	CommandLine = New("", ExitOnError)
 	// Usage prints a usage message documenting all defined command-line env vars
 	//  to CommandLine's output, which by default is os.Stderr. It is called when
 	// an error occurs while parsing env vars. The function is a variable that may
@@ -34,10 +34,6 @@ var (
 		_, _ = fmt.Fprintf(CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 		PrintDefaults()
 	}
-	// Value to use when an env var of type bool is an empty string.
-	EmptyBoolValue = true
-	// Ignore undefined variables instead of returning error.
-	IgnoreUndefined = true
 )
 
 func init() {
@@ -52,17 +48,5 @@ func cliUsage() {
 // after all env vars are defined and before env vars are accessed by the
 // program.
 func Parse() error {
-	return CommandLine.Parse(os.Environ())
-}
-
-// Visit visits the command-line env vars in lexicographical order, calling fn
-// for each. It visits only those env vars that have been set.
-func Visit(fn func(*EnvVar)) {
-	CommandLine.Visit(fn)
-}
-
-// VisitAll visits the command-line env vars in lexicographical order, calling
-// fn for each. It visits all env vars, even those not set.
-func VisitAll(fn func(*EnvVar)) {
-	CommandLine.VisitAll(fn)
+	return CommandLine.Parse()
 }
