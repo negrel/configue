@@ -1,3 +1,7 @@
+<h1 align="center">
+    <img height="250" alt="cute fig" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fb0%2Fb7%2F52%2Fb0b752d332e6e81e8dd7ed172aeefcd9.jpg&f=1&nofb=1&ipt=a52f6c53be292db57237cd5c7379525ee5b4146ff1765037c0bfea1cbb744b05">
+</h1>
+
 # `configue` - Configuration library for Go
 
 [![Go doc](https://pkg.go.dev/badge/github.com/negrel/configue)](https://pkg.go.dev/github.com/negrel/configue)
