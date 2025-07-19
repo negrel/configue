@@ -13,6 +13,7 @@ import (
 
 // Backend define options registry and parser.
 type Backend interface {
+	Init(name string, errorHandling ErrorHandling)
 	Var(val Value, name, usage string)
 	Parse() error
 	Parsed() bool
@@ -32,14 +33,23 @@ var _ Backend = &flagBackend{}
 
 type envBackend struct {
 	*env.EnvSet
+	prefix  string
 	nameMap map[string]string
 }
 
 // NewEnv returns a new environment variable based backend.
-func NewEnv(name string, errorHandling env.ErrorHandling) Backend {
-	eb := &envBackend{env.NewEnvSet(name, errorHandling), make(map[string]string)}
+func NewEnv(prefix string) Backend {
+	if prefix != "" && !strings.HasSuffix(prefix, "_") {
+		prefix += "_"
+	}
+
+	eb := &envBackend{
+		EnvSet:  env.NewEnvSet("", ContinueOnError),
+		prefix:  prefix,
+		nameMap: make(map[string]string),
+	}
 	eb.Usage = func() {
-		if name != "" {
+		if name := eb.Name(); name != "" {
 			_, _ = fmt.Fprintf(eb.Output(), "Environment variables of %v:\n", name)
 		} else {
 			_, _ = fmt.Fprintln(eb.Output(), "Environment variables:")
@@ -51,8 +61,8 @@ func NewEnv(name string, errorHandling env.ErrorHandling) Backend {
 
 func (ev *envBackend) envName(name string) string {
 	// Convert "OPTION.path" to "OPTION_PATH" env var.
-	path := strings.Split(strings.ToUpper(name), ".")
-	return strings.Join(path, "_")
+	path := strings.Split(name, ".")
+	return strings.ToUpper(ev.prefix + strings.Join(path, "_"))
 }
 
 // Var implements Backend.
@@ -86,10 +96,10 @@ type flagBackend struct {
 }
 
 // NewFlag returns a new flag based backend.
-func NewFlag(name string, errorHandling flag.ErrorHandling) Backend {
-	fb := &flagBackend{flag.NewFlagSet(name, errorHandling), make(map[string]string)}
+func NewFlag() Backend {
+	fb := &flagBackend{flag.NewFlagSet("", ContinueOnError), make(map[string]string)}
 	fb.Usage = func() {
-		if name != "" {
+		if name := fb.Name(); name != "" {
 			_, _ = fmt.Fprintf(fb.Output(), "Flags of %v:\n", name)
 		} else {
 			_, _ = fmt.Fprintln(fb.Output(), "Flags:")

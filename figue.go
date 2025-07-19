@@ -27,15 +27,15 @@ type Figue struct {
 func New(
 	name string,
 	errorHandling ErrorHandling,
-	newBackends ...func(string, ErrorHandling) Backend,
+	backends ...Backend,
 ) *Figue {
-	if len(newBackends) < 1 {
+	if len(backends) < 1 {
 		panic("you must provide at least one configue.Backend")
 	}
 
-	var backends []Backend
-	for _, b := range newBackends {
-		backends = append(backends, b(name, errorHandling))
+	// Initialize backends.
+	for _, b := range backends {
+		b.Init(name, errorHandling)
 	}
 
 	f := &Figue{
