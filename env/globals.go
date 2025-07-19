@@ -19,7 +19,7 @@ const (
 
 var (
 	// CommandLine is the default set of command-line env vars, parsed from
-	// os.Environ. The top-level functions such as BoolVar, Arg, and so on are
+	// os.Environ. The top-level functions such as BoolVar, and so on are
 	// wrappers for the methods of CommandLine.
 	CommandLine = NewEnvSet("", ExitOnError)
 	// Usage prints a usage message documenting all defined command-line env vars

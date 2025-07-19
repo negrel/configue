@@ -11,7 +11,7 @@ import (
 	"github.com/negrel/configue/option"
 )
 
-// Backend define options registry and parsers.
+// Backend define options registry and parser.
 type Backend interface {
 	Var(val Value, name, usage string)
 	Parse() error

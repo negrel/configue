@@ -38,21 +38,12 @@ they are all pointers; if you bind to variables, they're values.
 
 # Command line env var syntax
 
-Integer env vars accept 1234, 0664, 0x1234 and may be negative.
-Boolean env vars may be:
+See [`option`](../option#pkg-overview) documentation for options syntax of basic
+types.
 
-	1, 0, t, f, T, F, true, false, TRUE, FALSE, True, False
-
-An empty boolean env var is interpreted as true if [EmptyBoolValue] is true and
-false otherwise.
-
-Duration env vars accept any input valid for time.ParseDuration.
-
-The default set of command-line env vars is controlled by
-top-level functions.  The [EnvSet] type allows one to define
-independent sets of env vars, such as to implement subcommands
-in a command-line interface. The methods of [EnvSet] are
-analogous to the top-level functions for the command-line
-env var set.
+The default set of command-line env vars is controlled by top-level functions.
+The [EnvSet] type allows one to define independent sets of env vars, such as to
+implement subcommands in a command-line interface. The methods of [EnvSet] are
+analogous to the top-level functions for the command-line env var set.
 */
 package env

@@ -6,8 +6,8 @@
 [![PRs welcome card](https://img.shields.io/badge/PRs-Welcome-brightgreen)](https://github.com/negrel/configue/pulls)
 ![Go version card](https://img.shields.io/github/go-mod/go-version/negrel/configue)
 
-`configue` is a simple, dependency-free configuration library for Go inspired
-by `flag` package from standard library.
+`configue` is a simple, dependency-free configuration library for Go. It is
+inspired by `flag` package from standard library.
 
 ## Contributing
 

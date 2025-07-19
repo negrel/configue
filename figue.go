@@ -24,7 +24,11 @@ type Figue struct {
 }
 
 // New returns a new Fig instance. This function panics if 0 backend is provided.
-func New(name string, errorHandling ErrorHandling, newBackends ...func(string, ErrorHandling) Backend) *Figue {
+func New(
+	name string,
+	errorHandling ErrorHandling,
+	newBackends ...func(string, ErrorHandling) Backend,
+) *Figue {
 	if len(newBackends) < 1 {
 		panic("you must provide at least one configue.Backend")
 	}
