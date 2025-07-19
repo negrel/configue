@@ -1,36 +1,13 @@
-# `configue` - Simple, dependency-free configuration library for Go
+# `configue` - Configuration library for Go
 
-## Why ?
+[![Go doc](https://pkg.go.dev/badge/github.com/negrel/configue)](https://pkg.go.dev/github.com/negrel/configue)
+[![go report card](https://goreportcard.com/badge/github.com/negrel/configue)](https://goreportcard.com/report/github.com/negrel/configue)
+[![license card](https://img.shields.io/github/license/negrel/configue)](./LICENSE)
+[![PRs welcome card](https://img.shields.io/badge/PRs-Welcome-brightgreen)](https://github.com/negrel/configue/pulls)
+![Go version card](https://img.shields.io/github/go-mod/go-version/negrel/configue)
 
-- What was your motivation?
-- Why did you build this project?
-- What problem does it solve?
-- What did you learn?
-- What makes your project stand out?
-
-If your project has a lot of features, consider adding a "Features" section and listing them here.
-
-## Getting started
-
-### Configuration
-
-Here is a table of configuration options:
-
-|  Option name  | Default value |           Description            |
-| :-----------: | :-----------: | :------------------------------: |
-| `OPTION_NAME` |    `VALUE`    |       Option description.        |
-
-### Building the project
-
-```shell
-make build
-```
-
-### Running the tests
-
-```shell
-make tests
-```
+`configue` is a simple, dependency-free configuration library for Go inspired
+by `flag` package from standard library.
 
 ## Contributing
 
