@@ -7,9 +7,7 @@ package configue
 import (
 	"fmt"
 	"io"
-	"maps"
 	"os"
-	"slices"
 
 	"github.com/negrel/configue/option"
 )
@@ -17,7 +15,6 @@ import (
 // Figue define the top level configuration loader.
 type Figue struct {
 	backends []Backend
-	options  map[string]struct{}
 	name     string
 	output   io.Writer
 	Usage    func()
@@ -40,7 +37,6 @@ func New(
 
 	f := &Figue{
 		backends: backends,
-		options:  make(map[string]struct{}),
 		name:     name,
 		output:   nil,
 	}
@@ -59,28 +55,17 @@ func (f *Figue) Var(val option.Value, path string, usage string) {
 	for _, b := range f.backends {
 		b.Var(val, path, usage)
 	}
-	f.options[path] = struct{}{}
 }
 
 // Parse parses and merges options from their sources. Must be called after all
 // options in the Figue are defined and before options are accessed by the program.
 func (f *Figue) Parse() error {
-	undefinedOptions := maps.Clone(f.options)
-
 	for _, b := range f.backends {
 		err := b.Parse()
 		if err != nil {
 			return err
 		}
-
-		// Remove defined options.
-		b.Visit(func(name string, _ option.Value) {
-			delete(undefinedOptions, name)
-		})
 	}
-
-	undefined := slices.Collect(maps.Keys(undefinedOptions))
-	_ = undefined
 
 	return nil
 }

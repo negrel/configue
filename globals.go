@@ -21,7 +21,7 @@ var (
 	// CommandLine is the default set of command-line options, parsed from
 	// environments variable and flags. The top-level functions such as BoolVar,
 	// and so on are wrappers for the methods of CommandLine.
-	CommandLine = New("", ExitOnError, NewEnv, NewFlag)
+	CommandLine = New("", ExitOnError, NewEnv(""), NewFlag())
 	// Usage prints a usage message documenting all defined command-line env vars
 	//  to CommandLine's output, which by default is os.Stderr. It is called when
 	// an error occurs while parsing env vars. The function is a variable that may
