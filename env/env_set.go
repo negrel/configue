@@ -134,6 +134,8 @@ func (es *EnvSet) Parse(envvars []string) error {
 		if err == nil {
 			break
 		}
+
+		es.usage()
 		switch es.errorHandling {
 		case ContinueOnError:
 			return err
