@@ -5,6 +5,7 @@ package from the standard library.
 package configue
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -14,10 +15,11 @@ import (
 
 // Figue define the top level configuration loader.
 type Figue struct {
-	backends []Backend
-	name     string
-	output   io.Writer
-	Usage    func()
+	backends      []Backend
+	name          string
+	output        io.Writer
+	Usage         func()
+	errorHandling ErrorHandling
 }
 
 // New returns a new Fig instance. This function panics if 0 backend is provided.
@@ -32,7 +34,7 @@ func New(
 
 	// Initialize backends.
 	for _, b := range backends {
-		b.Init(name, errorHandling)
+		b.Init(name)
 	}
 
 	f := &Figue{
@@ -63,7 +65,19 @@ func (f *Figue) Parse() error {
 	for _, b := range f.backends {
 		err := b.Parse()
 		if err != nil {
-			return err
+			f.usage()
+
+			switch f.errorHandling {
+			case ContinueOnError:
+				return err
+			case ExitOnError:
+				if err == flag.ErrHelp {
+					os.Exit(0)
+				}
+				os.Exit(2)
+			case PanicOnError:
+				panic(err)
+			}
 		}
 	}
 
@@ -72,6 +86,14 @@ func (f *Figue) Parse() error {
 
 func (f *Figue) defaultUsage() {
 	f.PrintDefaults()
+}
+
+func (f *Figue) usage() {
+	if f.Usage == nil {
+		f.defaultUsage()
+	} else {
+		f.Usage()
+	}
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise, the

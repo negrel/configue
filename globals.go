@@ -34,6 +34,10 @@ var (
 		_, _ = fmt.Fprintf(CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 		PrintDefaults()
 	}
+
+	// ErrHelp is the error returned if the -help or -h flag is invoked but no
+	// such flag is defined.
+	ErrHelp = flag.ErrHelp
 )
 
 func init() {
