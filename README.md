@@ -13,6 +13,87 @@
 `configue` is a simple, dependency-free configuration library for Go. It is
 inspired by `flag` package from standard library.
 
+## Getting started
+
+Here is a simple example:
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"runtime"
+
+	"github.com/negrel/configue"
+)
+
+type Option struct {
+	Debug   bool
+	MaxProc int
+}
+
+func main() {
+	figue := configue.New(
+		"",                       // Subcommand name.
+		configue.ContinueOnError, // Error handling strategy.
+		configue.NewEnv("MYAPP"), // Environment variable backend with MYAPP_ prefix.
+		configue.NewFlag(),       // Go's std `flag` backend.
+	)
+
+	// Custom usage.
+	figue.Usage = func() {
+		_, _ = fmt.Fprintln(figue.Output(), "myapp - a great app")
+		_, _ = fmt.Fprintln(figue.Output())
+		_, _ = fmt.Fprintln(figue.Output(), "Usage:")
+		_, _ = fmt.Fprintln(figue.Output(), "  myapp [flags]")
+		_, _ = fmt.Fprintln(figue.Output())
+		figue.PrintDefaults()
+	}
+
+	// Define options.
+	var option Option
+	figue.BoolVar(&option.Debug, "debug", false, "enable debug logs")
+	figue.IntVar(&option.MaxProc, "max.proc", runtime.NumCPU(), "maximum number of CPU that can be executed simultaneously")
+
+	// Parse options.
+	err := figue.Parse()
+	if errors.Is(err, configue.ErrHelp) {
+		return
+	}
+	if err != nil {
+		// handle error
+	}
+}
+```
+
+```sh
+$ myapp -h
+myapp - a great app
+
+Usage:
+  myapp [flags]
+
+Flags:
+  -debug
+        enable debug logs
+  -max-proc value
+        maximum number of CPU that can be executed simultaneously (default 16)
+
+Environment variables:
+  MYAPP_DEBUG
+        enable debug logs
+  MYAPP_MAX_PROC int
+        maximum number of CPU that can be executed simultaneously (default 16)
+```
+
+For a real example, see [Prisme Analytics](https://github.com/prismelabs/analytics/blob/e6522e6502fef0ceb3f5df79f17a6a3b4b70ba02/cmd/prisme/main.go#L42-L98)
+configuration loading.
+
+## TODO
+
+- [ ] Support `.ini` files
+
 ## Contributing
 
 If you want to contribute to `configue` to add a feature or improve the code contact
