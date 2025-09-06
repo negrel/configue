@@ -47,6 +47,8 @@ func (p *parser) trimSpace() {
 	buf := p.bytes()
 	trimmed := bytes.TrimLeftFunc(buf, unicode.IsSpace)
 	p.skip(len(buf) - len(trimmed))
+	trimmed = bytes.TrimRightFunc(buf, unicode.IsSpace)
+	p.buf = p.buf[:len(p.buf)-(len(buf)-len(trimmed))]
 }
 
 func (p *parser) bytes() []byte {
@@ -154,6 +156,7 @@ func (p *parser) parseNext() (string, string, error) {
 }
 
 func (p *parser) parseValue() (string, error) {
+	p.trimComment()
 	p.trimSpace()
 	if p.empty() {
 		return "", nil
@@ -174,6 +177,8 @@ func (p *parser) parseValue() (string, error) {
 	_, _ = b.Write(line[:len(line)-1])
 	_ = b.WriteByte('\n')
 	for p.nextLine() {
+		p.trimComment()
+		p.trimSpace()
 		line = p.bytes()
 		if len(line) == 0 || line[len(line)-1] != '\\' {
 			_, _ = b.Write(line)

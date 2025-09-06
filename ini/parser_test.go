@@ -41,6 +41,14 @@ func TestParser(t *testing.T) {
 			},
 		},
 		{
+			name: "StringUnquoted",
+			input: `str = a ; \
+`,
+			output: [][2]string{
+				{"str", "a"},
+			},
+		},
+		{
 			name:  "MultipleWhiteSpaces",
 			input: "     \t   foo   =    \tbar",
 			output: [][2]string{
@@ -57,7 +65,7 @@ func TestParser(t *testing.T) {
 		{
 			name: "MultiLineStringUnquoted",
 			input: `str = a \
-b`,
+b ; foo`,
 			output: [][2]string{
 				{"str", "a \nb"},
 			},
