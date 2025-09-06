@@ -235,8 +235,30 @@ func (es *EnvSet) defaultUsage() {
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise, the
-// default values of all defined command-line env vars in the set. See the
-// documentation for the global function PrintDefaults for more information.
+// default values of all defined env vars in the set.
+// For an integer valued env var X, the default output has the form
+//
+//	X int
+//		usage-message-for-x (default 7)
+//
+// The usage message will appear on a separate line for anything but
+// a bool env var with a one-byte name. For bool env vars, the type is
+// omitted and if the env var name is one byte the usage message appears
+// on the same line. The parenthetical default is omitted if the
+// default is the zero value for the type. The listed type, here int,
+// can be changed by placing a back-quoted name in the env var's usage
+// string; the first such item in the message is taken to be a parameter
+// name to show in the message and the back quotes are stripped from
+// the message when displayed. For instance, given
+//
+//	env.String("I", "", "search `directory` for include files")
+//
+// the output will be
+//
+//	I directory
+//		search directory for include files.
+//
+// To change the destination for env var messages, call [*EnvSet.SetOutput].
 func (es *EnvSet) PrintDefaults() {
 	var isZeroValueErrs []error
 	es.VisitAll(func(envVar *EnvVar) {

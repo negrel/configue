@@ -115,8 +115,8 @@ func (es *EnvSet) TextVar(p encoding.TextUnmarshaler, name string, value encodin
 	es.Var(option.NewText(value, p), name, usage)
 }
 
-// Uint defines a uint option with specified name, default value, and usage
-// string. The return value is the address of a uint variable that stores the
+// Uint defines an uint option with specified name, default value, and usage
+// string. The return value is the address of an uint variable that stores the
 // value of the option.
 func (es *EnvSet) Uint(name string, value uint, usage string) *uint {
 	u := new(uint)
@@ -124,14 +124,14 @@ func (es *EnvSet) Uint(name string, value uint, usage string) *uint {
 	return u
 }
 
-// UintVar defines a uint option with specified name, default value, and usage
-// string. The argument p points to a uint variable in which to store the value of the option.
+// UintVar defines an uint option with specified name, default value, and usage
+// string. The argument p points to an uint variable in which to store the value of the option.
 func (es *EnvSet) UintVar(p *uint, name string, value uint, usage string) {
 	es.Var(option.NewUint(value, p), name, usage)
 }
 
-// Uint64 defines a uint64 option with specified name, default value, and usage
-// string. The return value is the address of a uint64 variable that stores the
+// Uint64 defines an uint64 option with specified name, default value, and usage
+// string. The return value is the address of an uint64 variable that stores the
 // value of the option.
 func (es *EnvSet) Uint64(name string, value uint64, usage string) *uint64 {
 	u := new(uint64)
@@ -139,8 +139,8 @@ func (es *EnvSet) Uint64(name string, value uint64, usage string) *uint64 {
 	return u
 }
 
-// Uint64Var defines a uint64 option with specified name, default value, and
-// usage string. The argument p points to a uint64 variable in which to store
+// Uint64Var defines an uint64 option with specified name, default value, and
+// usage string. The argument p points to an uint64 variable in which to store
 // the value of the option.
 func (es *EnvSet) Uint64Var(p *uint64, name string, value uint64, usage string) {
 	es.Var(option.NewUint64(value, p), name, usage)
@@ -149,28 +149,9 @@ func (es *EnvSet) Uint64Var(p *uint64, name string, value uint64, usage string) 
 
 // PrintDefaults prints, to standard error unless configured otherwise,
 // a usage message showing the default settings of all defined
-// command-line env vars.
-// For an integer valued env var x, the default output has the form
+// env vars.
 //
-//	-x int
-//		usage-message-for-x (default 7)
-//
-// The usage message will appear on a separate line for anything but
-// a bool env var with a one-byte name. For bool env vars, the type is
-// omitted and if the env var name is one byte the usage message appears
-// on the same line. The parenthetical default is omitted if the
-// default is the zero value for the type. The listed type, here int,
-// can be changed by placing a back-quoted name in the env var's usage
-// string; the first such item in the message is taken to be a parameter
-// name to show in the message and the back quotes are stripped from
-// the message when displayed. For instance, given
-//
-//	env.String("I", "", "search `directory` for include files")
-//
-// the output will be
-//
-//	-I directory
-//		search directory for include files.
+// For an example, see [*EnvSet.PrintDefaults].
 //
 // To change the destination for env var messages, call [CommandLine].SetOutput.
 func PrintDefaults() {
@@ -263,26 +244,26 @@ func Int64Var(p *int64, name string, value int64, usage string) {
 	CommandLine.Var(option.NewInt64(value, p), name, usage)
 }
 
-// Uint defines a uint env var with specified name, default value, and usage string.
-// The return value is the address of a uint variable that stores the value of the env var.
+// Uint defines an uint env var with specified name, default value, and usage string.
+// The return value is the address of an uint variable that stores the value of the env var.
 func Uint(name string, value uint, usage string) *uint {
 	return CommandLine.Uint(name, value, usage)
 }
 
-// UintVar defines a uint env var with specified name, default value, and usage string.
-// The argument p points to a uint variable in which to store the value of the env var.
+// UintVar defines an uint env var with specified name, default value, and usage string.
+// The argument p points to an uint variable in which to store the value of the env var.
 func UintVar(p *uint, name string, value uint, usage string) {
 	CommandLine.Var(option.NewUint(value, p), name, usage)
 }
 
-// Uint64 defines a uint64 env var with specified name, default value, and usage string.
-// The return value is the address of a uint64 variable that stores the value of the env var.
+// Uint64 defines an uint64 env var with specified name, default value, and usage string.
+// The return value is the address of an uint64 variable that stores the value of the env var.
 func Uint64(name string, value uint64, usage string) *uint64 {
 	return CommandLine.Uint64(name, value, usage)
 }
 
-// Uint64Var defines a uint64 env var with specified name, default value, and usage string.
-// The argument p points to a uint64 variable in which to store the value of the env var.
+// Uint64Var defines an uint64 env var with specified name, default value, and usage string.
+// The argument p points to an uint64 variable in which to store the value of the env var.
 func Uint64Var(p *uint64, name string, value uint64, usage string) {
 	CommandLine.Var(option.NewUint64(value, p), name, usage)
 }
@@ -325,7 +306,7 @@ func DurationVar(p *time.Duration, name string, value time.Duration, usage strin
 	CommandLine.Var(option.NewDuration(value, p), name, usage)
 }
 
-// TextVar defines a env var with a specified name, default value, and usage string.
+// TextVar defines an env var with a specified name, default value, and usage string.
 // The argument p must be a pointer to a variable that will hold the value
 // of the env var, and p must implement encoding.TextUnmarshaler.
 // If the env var is used, the env var value will be passed to p's UnmarshalText method.
@@ -337,7 +318,7 @@ func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshal
 // Var defines an env var with the specified name and usage string. The type and
 // value of the env var are represented by the first argument, of type [Value], which
 // typically holds a user-defined implementation of [Value]. For instance, the
-// caller could create a env var that turns a comma-separated string into a slice
+// caller could create an env var that turns a comma-separated string into a slice
 // of strings by giving the slice the methods of [Value]; in particular, [Set] would
 // decompose the comma-separated string into the slice.
 func Var(value option.Value, name string, usage string) {
