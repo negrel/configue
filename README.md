@@ -10,8 +10,12 @@
 [![PRs welcome card](https://img.shields.io/badge/PRs-Welcome-brightgreen)](https://github.com/negrel/configue/pulls)
 ![Go version card](https://img.shields.io/github/go-mod/go-version/negrel/configue)
 
-`configue` is a simple, dependency-free configuration library for Go. It is
-inspired by `flag` package from standard library.
+`configue` is a simple, extensible and dependency-free configuration library for
+Go. It implements an API similar to `flag` package from standard library to load
+and merge options from multiple sources.
+
+Flags, environment variables and INI files are built-in but you can add custom
+sources by implementing the `Backend` interface.
 
 ## Getting started
 
@@ -23,6 +27,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"runtime"
 
 	"github.com/negrel/configue"
@@ -34,11 +39,21 @@ type Option struct {
 }
 
 func main() {
+	iniFile, err := os.Open("./config.ini")
+	if err != nil {
+		// handle error.
+	}
+
+	// Create backends.
+	env := configue.NewEnv("MYAPP")
+	flag := configue.NewFlag()
+
 	figue := configue.New(
 		"",                       // Subcommand name.
 		configue.ContinueOnError, // Error handling strategy.
-		configue.NewEnv("MYAPP"), // Environment variable backend with MYAPP_ prefix.
-		configue.NewFlag(),       // Go's std `flag` backend.
+		configue.NewINI(iniFile), // INI file backend.
+		env,                      // Environment variable backend with MYAPP_ prefix.
+		flag,                     // Go's std `flag` backend.
 	)
 
 	// Custom usage.
@@ -48,16 +63,19 @@ func main() {
 		_, _ = fmt.Fprintln(figue.Output(), "Usage:")
 		_, _ = fmt.Fprintln(figue.Output(), "  myapp [flags]")
 		_, _ = fmt.Fprintln(figue.Output())
-		figue.PrintDefaults()
+		flag.PrintDefaults()
+		_, _ = fmt.Fprintln(figue.Output())
+		env.PrintDefaults()
+		// We don't print INI defaults.
 	}
 
 	// Define options.
-	var option Option
-	figue.BoolVar(&option.Debug, "debug", false, "enable debug logs")
-	figue.IntVar(&option.MaxProc, "max.proc", runtime.NumCPU(), "maximum number of CPU that can be executed simultaneously")
+	var options Option
+	figue.BoolVar(&options.Debug, "debug", false, "enable debug logs")
+	figue.IntVar(&options.MaxProc, "max.proc", runtime.NumCPU(), "maximum number of CPU that can be executed simultaneously")
 
 	// Parse options.
-	err := figue.Parse()
+	err = figue.Parse()
 	if errors.Is(err, configue.ErrHelp) {
 		return
 	}
@@ -89,10 +107,6 @@ Environment variables:
 
 For a real example, see [Prisme Analytics](https://github.com/prismelabs/analytics/blob/e6522e6502fef0ceb3f5df79f17a6a3b4b70ba02/cmd/prisme/main.go#L42-L98)
 configuration loading.
-
-## TODO
-
-- [ ] Support `.ini` files
 
 ## Contributing
 
