@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+// Option define a configuration option.
+type Option struct {
+	Name     string
+	Usage    string
+	Value    Value
+	DefValue string
+}
+
 // Value is the interface to the dynamic value stored in an option. (The default
 // value is represented as a string.)
 type Value = flag.Value

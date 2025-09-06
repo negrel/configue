@@ -14,12 +14,7 @@ import (
 )
 
 // Property represents the state of an INI key value.
-type Property struct {
-	Name     string
-	Usage    string
-	Value    option.Value
-	DefValue string
-}
+type Property = option.Option
 
 func NewPropSet(name string, errorHandling ErrorHandling) *PropSet {
 	ps := &PropSet{

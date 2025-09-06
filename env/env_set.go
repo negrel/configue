@@ -12,12 +12,7 @@ import (
 )
 
 // EnvVar represents the state of an environment variable.
-type EnvVar struct {
-	Name     string
-	Usage    string
-	Value    option.Value
-	DefValue string
-}
+type EnvVar = option.Option
 
 // NewEnvSet returns a new, empty env var set with the specified name and error
 // handling property. If the name is not empty, it will be printed in the
