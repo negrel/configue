@@ -3,7 +3,6 @@ package configue
 import (
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"path"
 )
@@ -23,7 +22,7 @@ var (
 	// CommandLine is the default set of command-line options, parsed from
 	// environments variable and flags. The top-level functions such as BoolVar,
 	// and so on are wrappers for the methods of CommandLine.
-	CommandLine = New("", ExitOnError, NewINI(iniFile()), NewEnv(""), NewFlag())
+	CommandLine = New("", ExitOnError, NewINI(File("./", "config.ini")), NewEnv(""), NewFlag())
 	// Usage prints a usage message documenting all defined command-line env vars
 	//  to CommandLine's output, which by default is os.Stderr. It is called when
 	// an error occurs while parsing env vars. The function is a variable that may
@@ -57,14 +56,24 @@ func Parse() error {
 	return CommandLine.Parse()
 }
 
-// iniFile returns path of os.UserConfigDir() + / + cmd + / + config.ini.
-func iniFile() string {
+// UserDir returns user configuration directory or provided default on error
+// (e.g. when os.UserConfigDir fails).
+func UserDir(def string) string {
 	cfgDir, err := os.UserConfigDir()
 	if err != nil {
-		return ""
+		return def
 	}
-	cmd := path.Base(os.Args[0])
-	fpath := path.Join(cfgDir, cmd, "config.ini")
+	return cfgDir
+}
 
-	return fpath
+// AppDir returns application configuration directory which is [UserDir] joined
+// with os.Args[0].
+func AppDir(defaultUserDir string) string {
+	return path.Join(UserDir(defaultUserDir), path.Base(os.Args[0]))
+}
+
+// File returns path to configuration file by joining [AppDir] with provided
+// `fname`.
+func File(defaultUserDir, fname string) string {
+	return path.Join(AppDir(defaultUserDir), fname)
 }
