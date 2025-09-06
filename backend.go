@@ -1,6 +1,7 @@
 package configue
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -29,23 +30,24 @@ type Value interface {
 	Set(string) error
 }
 
-var _ Backend = &envBackend{}
-var _ Backend = &flagBackend{}
-var _ Backend = &iniBackend{}
+var _ Backend = &Env{}
+var _ Backend = &Flag{}
+var _ Backend = &Ini{}
 
-type envBackend struct {
+// Env defines an environment variables based backend.
+type Env struct {
 	*env.EnvSet
 	prefix  string
 	nameMap map[string]string
 }
 
-// NewEnv returns a new environment variable based backend.
-func NewEnv(prefix string) Backend {
+// NewEnv returns a new environment variable based Backend implementation.
+func NewEnv(prefix string) *Env {
 	if prefix != "" && !strings.HasSuffix(prefix, "_") {
 		prefix += "_"
 	}
 
-	eb := &envBackend{
+	eb := &Env{
 		EnvSet:  env.NewEnvSet("", ContinueOnError),
 		prefix:  prefix,
 		nameMap: make(map[string]string),
@@ -54,37 +56,37 @@ func NewEnv(prefix string) Backend {
 	return eb
 }
 
-func (eb *envBackend) envName(name string) string {
+func (env *Env) envName(name string) string {
 	// Convert "OPTION.path" to "OPTION_PATH" env var.
 	path := strings.Split(name, ".")
-	return strings.ToUpper(eb.prefix + strings.Join(path, "_"))
+	return strings.ToUpper(env.prefix + strings.Join(path, "_"))
 }
 
 // Init implements Backend.
-func (eb *envBackend) Init(name string) {
-	eb.EnvSet.Init(name, flag.ContinueOnError)
+func (env *Env) Init(name string) {
+	env.EnvSet.Init(name, flag.ContinueOnError)
 }
 
 // Var implements Backend.
-func (eb *envBackend) Var(val Value, name, usage string) {
-	envName := eb.envName(name)
-	eb.EnvSet.Var(val, envName, usage)
-	eb.nameMap[envName] = name
+func (env *Env) Var(val Value, name, usage string) {
+	envName := env.envName(name)
+	env.EnvSet.Var(val, envName, usage)
+	env.nameMap[envName] = name
 }
 
 // Set sets the value of the named command-line option.
-func (eb *envBackend) Set(name, value string) error {
-	envName := eb.envName(name)
-	return eb.EnvSet.Set(envName, value)
+func (env *Env) Set(name, value string) error {
+	envName := env.envName(name)
+	return env.EnvSet.Set(envName, value)
 }
 
 // Parse implements Backend.
-func (eb *envBackend) Parse() error {
-	return eb.EnvSet.Parse(os.Environ())
+func (env *Env) Parse() error {
+	return env.EnvSet.Parse(os.Environ())
 }
 
 // Visit implements Backend.
-func (eb *envBackend) Visit(fn func(option.Option)) {
+func (eb *Env) Visit(fn func(option.Option)) {
 	eb.EnvSet.Visit(func(envVar *env.EnvVar) {
 		opt := *envVar
 		opt.Name = eb.nameMap[envVar.Name]
@@ -93,58 +95,60 @@ func (eb *envBackend) Visit(fn func(option.Option)) {
 }
 
 // PrintDefaults implements Backend.
-func (eb *envBackend) PrintDefaults() {
-	if name := eb.Name(); name != "" {
-		_, _ = fmt.Fprintf(eb.Output(), "Environment variables of %v:\n", name)
+func (env *Env) PrintDefaults() {
+	if name := env.Name(); name != "" {
+		_, _ = fmt.Fprintf(env.Output(), "Environment variables of %v:\n", name)
 	} else {
-		_, _ = fmt.Fprintln(eb.Output(), "Environment variables:")
+		_, _ = fmt.Fprintln(env.Output(), "Environment variables:")
 	}
-	eb.EnvSet.PrintDefaults()
+	env.EnvSet.PrintDefaults()
+	_, _ = fmt.Fprintln(env.Output())
 }
 
-type flagBackend struct {
+// Flag defines a flag based Backend implementation.
+type Flag struct {
 	*flag.FlagSet
 	nameMap map[string]string
 }
 
 // NewFlag returns a new flag based backend.
-func NewFlag() Backend {
-	fb := &flagBackend{flag.NewFlagSet("", ContinueOnError), make(map[string]string)}
+func NewFlag() *Flag {
+	fb := &Flag{flag.NewFlagSet("", ContinueOnError), make(map[string]string)}
 	fb.Usage = func() {}
 	return fb
 }
 
-func (fb *flagBackend) flagName(name string) string {
+func (flag *Flag) flagName(name string) string {
 	// Convert "OPTION.path" to "option-path" flag.
 	path := strings.Split(strings.ToLower(name), ".")
 	return strings.Join(path, "-")
 }
 
 // Init implements Backend.
-func (fb *flagBackend) Init(name string) {
-	fb.FlagSet.Init(name, ContinueOnError)
+func (flag *Flag) Init(name string) {
+	flag.FlagSet.Init(name, ContinueOnError)
 }
 
 // Var implements Backend.
-func (fb *flagBackend) Var(val Value, name, usage string) {
-	flagName := fb.flagName(name)
-	fb.FlagSet.Var(val, flagName, usage)
-	fb.nameMap[flagName] = name
+func (flag *Flag) Var(val Value, name, usage string) {
+	flagName := flag.flagName(name)
+	flag.FlagSet.Var(val, flagName, usage)
+	flag.nameMap[flagName] = name
 }
 
 // Set sets the value of the named command-line option.
-func (fb *flagBackend) Set(name, value string) error {
-	flagName := fb.flagName(name)
-	return fb.FlagSet.Set(flagName, value)
+func (flag *Flag) Set(name, value string) error {
+	flagName := flag.flagName(name)
+	return flag.FlagSet.Set(flagName, value)
 }
 
 // Parse implements Backend.
-func (fb *flagBackend) Parse() error {
-	return fb.FlagSet.Parse(os.Args[1:])
+func (flag *Flag) Parse() error {
+	return flag.FlagSet.Parse(os.Args[1:])
 }
 
 // Visit implements Backend.
-func (fb *flagBackend) Visit(fn func(option.Option)) {
+func (fb *Flag) Visit(fn func(option.Option)) {
 	fb.FlagSet.Visit(func(flag *flag.Flag) {
 		opt := option.Option(*flag)
 		opt.Name = fb.nameMap[flag.Name]
@@ -153,60 +157,77 @@ func (fb *flagBackend) Visit(fn func(option.Option)) {
 }
 
 // PrintDefaults implements Backend.
-func (fb *flagBackend) PrintDefaults() {
-	if name := fb.Name(); name != "" {
-		_, _ = fmt.Fprintf(fb.Output(), "Flags of %v:\n", name)
+func (flag *Flag) PrintDefaults() {
+	if name := flag.Name(); name != "" {
+		_, _ = fmt.Fprintf(flag.Output(), "Flags of %v:\n", name)
 	} else {
-		_, _ = fmt.Fprintln(fb.Output(), "Flags:")
+		_, _ = fmt.Fprintln(flag.Output(), "Flags:")
 	}
-	fb.FlagSet.PrintDefaults()
+	flag.FlagSet.PrintDefaults()
+	_, _ = fmt.Fprintln(flag.Output())
 }
 
-type iniBackend struct {
+// Ini defines an INI file based Backend implementation.
+type Ini struct {
 	*ini.PropSet
-	r io.Reader
+	FilePath string
 }
 
-// NewINI returns a new INI based backend.
-func NewINI(r io.Reader) Backend {
-	ib := &iniBackend{ini.NewPropSet("", ContinueOnError), r}
+// NewINI returns a new INI based backend that will parse data from provided
+// filepath. If the file doesn't exist, this backend will parse nothing.
+func NewINI(fpath string) *Ini {
+	ib := &Ini{ini.NewPropSet("", ContinueOnError), fpath}
 	ib.Usage = func() {}
 	return ib
 }
 
 // Init implements Backend.
-func (ib *iniBackend) Init(name string) {
-	ib.PropSet.Init(name, ContinueOnError)
+func (ini *Ini) Init(name string) {
+	ini.PropSet.Init(name, ContinueOnError)
 }
 
 // Var implements Backend.
-func (ib *iniBackend) Var(val Value, name, usage string) {
-	ib.PropSet.Var(val, name, usage)
+func (ini *Ini) Var(val Value, name, usage string) {
+	ini.PropSet.Var(val, name, usage)
 }
 
 // Set sets the value of the named command-line option.
-func (ib *iniBackend) Set(name, value string) error {
-	return ib.PropSet.Set(name, value)
+func (ini *Ini) Set(name, value string) error {
+	return ini.PropSet.Set(name, value)
 }
 
 // Parse implements Backend.
-func (ib *iniBackend) Parse() error {
-	return ib.PropSet.Parse(ib.r)
+func (ini *Ini) Parse() error {
+	f, err := os.Open(ini.FilePath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	defer f.Close()
+
+	return ini.PropSet.Parse(f)
 }
 
 // Visit implements Backend.
-func (ib *iniBackend) Visit(fn func(option.Option)) {
+func (ib *Ini) Visit(fn func(option.Option)) {
 	ib.PropSet.Visit(func(prop *ini.Property) {
 		fn(*prop)
 	})
 }
 
-// PrintDefaults implements Backend.
-func (ib *iniBackend) PrintDefaults() {
-	if name := ib.Name(); name != "" {
-		_, _ = fmt.Fprintf(ib.Output(), "Properties of %v:\n", name)
-	} else {
-		_, _ = fmt.Fprintln(ib.Output(), "Properties:")
+// PrintDefaults implements Backend. Unlike other backends, we only print path
+// to config file here.
+func (ini *Ini) PrintDefaults() {
+	if ini.FilePath == "" {
+		return
 	}
-	ib.PropSet.PrintDefaults()
+
+	if name := ini.Name(); name != "" {
+		_, _ = fmt.Fprintf(ini.Output(), "Configuration file of %v is located at %v\n", name, ini.FilePath)
+	} else {
+		_, _ = fmt.Fprintf(ini.Output(), "Configuration file is located at %v\n", ini.FilePath)
+	}
+	_, _ = fmt.Fprintln(ini.Output())
 }

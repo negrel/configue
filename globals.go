@@ -57,19 +57,14 @@ func Parse() error {
 	return CommandLine.Parse()
 }
 
-// iniFile tries to open os.UserConfigDir() + / + cmd + / + config.ini file and
-// returns it. If it fails, a nil reader is returned.
-func iniFile() io.Reader {
+// iniFile returns path of os.UserConfigDir() + / + cmd + / + config.ini.
+func iniFile() string {
 	cfgDir, err := os.UserConfigDir()
 	if err != nil {
-		return nil
+		return ""
 	}
 	cmd := path.Base(os.Args[0])
 	fpath := path.Join(cfgDir, cmd, "config.ini")
 
-	f, err := os.Open(fpath)
-	if err != nil {
-		return nil
-	}
-	return f
+	return fpath
 }
