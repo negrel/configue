@@ -97,8 +97,8 @@ func (f *Figue) usage() {
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise, the
-// default values of all defined command-line options. See the
-// documentation for the global function PrintDefaults for more information.
+// default values of all defined command-line options. To do so, it calls in
+// reverse order [Backend.PrintDefaults] of all backends.
 func (f *Figue) PrintDefaults() {
 	for i := len(f.backends) - 1; i >= 0; i-- {
 		b := f.backends[i]
