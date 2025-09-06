@@ -19,7 +19,7 @@ sources by implementing the `Backend` interface.
 
 ## Getting started
 
-Here is a simple example:
+Here is an example:
 
 ```go
 package main
@@ -27,7 +27,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
 	"runtime"
 
 	"github.com/negrel/configue"
@@ -39,49 +38,45 @@ type Option struct {
 }
 
 func main() {
-	iniFile, err := os.Open("./config.ini")
-	if err != nil {
-		// handle error.
-	}
-
 	// Create backends.
-	env := configue.NewEnv("MYAPP")
-	flag := configue.NewFlag()
+	env := configue.NewEnv("MYAPP")                           // MYAPP_* environment variables.
+	flag := configue.NewFlag()                                // Command line flags.
+	ini := configue.NewINI(configue.File("./", "config.ini")) // INI configuration file.
 
+	// Create a figue that loads from INI file, env vars and flags in this
+	// specific order.
 	figue := configue.New(
 		"",                       // Subcommand name.
 		configue.ContinueOnError, // Error handling strategy.
-		configue.NewINI(iniFile), // INI file backend.
+		ini,                      // INI file backend.
 		env,                      // Environment variable backend with MYAPP_ prefix.
 		flag,                     // Go's std `flag` backend.
 	)
-
-	// Custom usage.
 	figue.Usage = func() {
 		_, _ = fmt.Fprintln(figue.Output(), "myapp - a great app")
 		_, _ = fmt.Fprintln(figue.Output())
 		_, _ = fmt.Fprintln(figue.Output(), "Usage:")
 		_, _ = fmt.Fprintln(figue.Output(), "  myapp [flags]")
 		_, _ = fmt.Fprintln(figue.Output())
-		flag.PrintDefaults()
-		_, _ = fmt.Fprintln(figue.Output())
-		env.PrintDefaults()
-		// We don't print INI defaults.
+		figue.PrintDefaults()
 	}
 
 	// Define options.
 	var options Option
+	figue.StringVar(&ini.FilePath, "config", ini.FilePath, "custom config file path")
 	figue.BoolVar(&options.Debug, "debug", false, "enable debug logs")
 	figue.IntVar(&options.MaxProc, "max.proc", runtime.NumCPU(), "maximum number of CPU that can be executed simultaneously")
 
 	// Parse options.
-	err = figue.Parse()
+	err := figue.Parse()
 	if errors.Is(err, configue.ErrHelp) {
 		return
 	}
 	if err != nil {
 		// handle error
 	}
+
+	fmt.Println(options)
 }
 ```
 
@@ -96,12 +91,6 @@ Flags:
   -debug
         enable debug logs
   -max-proc value
-        maximum number of CPU that can be executed simultaneously (default 16)
-
-Environment variables:
-  MYAPP_DEBUG
-        enable debug logs
-  MYAPP_MAX_PROC int
         maximum number of CPU that can be executed simultaneously (default 16)
 ```
 
