@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/negrel/configue/option"
@@ -58,13 +57,18 @@ func (es *EnvSet) Init(name string, errorHandling ErrorHandling) {
 
 // Var defines an environment variable with the specified name and usage string.
 // The type and value of the env var are represented by the first argument, of
-// type [Value], which typically holds a user-defined implementation of [Value].
-// For instance, the caller could create a env var that turns a comma-separated
-// string into a slice of strings by giving the slice the methods of [Value];
-// in particular, [Set] would decompose the comma-separated string into the slice.
+// type [option.Value], which typically holds a user-defined implementation of
+// [option.Value]. For instance, the caller could create an env var that turns a
+// comma-separated string into a slice of strings by giving the slice the
+// methods of [option.Value]; in particular, [Set] would decompose the
+// comma-separated string into the slice.
 func (es *EnvSet) Var(val option.Value, name string, usage string) {
 	if es.formal == nil {
 		es.formal = make(map[string]*EnvVar)
+	}
+
+	if strings.Contains(name, "=") {
+		panic(es.sprintf("env var %q contains =", name))
 	}
 
 	e := &EnvVar{name, usage, val, val.String()}
@@ -172,10 +176,6 @@ func (es *EnvSet) parseOne(envVar string) (bool, error) {
 			if err := env.Value.Set(val); err != nil {
 				return false, es.failf("invalid boolean value %q for %s: %v", val, key, err)
 			}
-		} else {
-			if err := env.Value.Set(strconv.FormatBool(EmptyBoolValue)); err != nil {
-				return false, es.failf("invalid boolean env var %s: %v", key, err)
-			}
 		}
 	} else {
 		// Set env var.
@@ -258,18 +258,10 @@ func (es *EnvSet) defaultUsage() {
 //	I directory
 //		search directory for include files.
 //
-// Env vars with usage "HIDDEN" won't be printed:
-//
-//	env.String("EXPERIMENTAL_OPTION", "", "HIDDEN")
-//
 // To change the destination for env var messages, call [*EnvSet.SetOutput].
 func (es *EnvSet) PrintDefaults() {
 	var isZeroValueErrs []error
 	es.VisitAll(func(envVar *EnvVar) {
-		if envVar.Usage == "HIDDEN" {
-			return
-		}
-
 		var b strings.Builder
 		fmt.Fprintf(&b, "  %s", envVar.Name)
 		name, usage := UnquoteUsage(envVar.Value, envVar.Usage)

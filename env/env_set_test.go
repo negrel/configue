@@ -11,7 +11,6 @@ import (
 
 func TestEnvSet(t *testing.T) {
 	t.Run("Primitives", func(t *testing.T) {
-
 		t.Run("Parse", func(t *testing.T) {
 			t.Run("Default", func(t *testing.T) {
 				var es EnvSet
@@ -79,6 +78,12 @@ func TestEnvSet(t *testing.T) {
 			})
 
 			t.Run("Error", func(t *testing.T) {
+				t.Run("EmptyStringEnvVarName", func(t *testing.T) {
+					var es EnvSet
+
+					es.Bool("", false, "")
+				})
+
 				t.Run("UndefinedEnvVar", func(t *testing.T) {
 					var es EnvSet
 
@@ -131,28 +136,6 @@ func TestEnvSet(t *testing.T) {
 					}
 				})
 			})
-
-			t.Run("BoolEmpty", func(t *testing.T) {
-				var es EnvSet
-				b := es.Bool("undef", false, "a bool env var")
-				err := es.Parse([]string{"undef="})
-				if err != nil {
-					t.Fatal("unexpected parse error")
-				}
-				if !*b {
-					t.Fatal("unexpected bool value")
-				}
-
-				EmptyBoolValue = false
-				err = es.Parse([]string{"undef="})
-				if err != nil {
-					t.Fatal("unexpected parse error")
-				}
-				if *b {
-					t.Fatal("unexpected bool value")
-				}
-				EmptyBoolValue = true
-			})
 		})
 
 		t.Run("Name", func(t *testing.T) {
@@ -179,7 +162,6 @@ func TestEnvSet(t *testing.T) {
 
 		t.Run("PrintDefaults", func(t *testing.T) {
 			var es EnvSet
-			_ = es.Bool("secret-option", true, "HIDDEN")
 			_ = es.Bool("bool", true, "a bool env var")
 			_ = es.Duration("dur", time.Second, "a duration env var")
 			_ = es.Float64("float", math.Pi, "a float env var")

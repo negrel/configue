@@ -34,8 +34,6 @@ var (
 		_, _ = fmt.Fprintf(CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 		PrintDefaults()
 	}
-	// Value to use when an env var of type bool is an empty string.
-	EmptyBoolValue = true
 	// Ignore undefined variables instead of returning error.
 	IgnoreUndefined = true
 )
