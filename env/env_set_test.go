@@ -179,6 +179,7 @@ func TestEnvSet(t *testing.T) {
 
 		t.Run("PrintDefaults", func(t *testing.T) {
 			var es EnvSet
+			_ = es.Bool("secret-option", true, "HIDDEN")
 			_ = es.Bool("bool", true, "a bool env var")
 			_ = es.Duration("dur", time.Second, "a duration env var")
 			_ = es.Float64("float", math.Pi, "a float env var")

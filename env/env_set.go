@@ -258,10 +258,18 @@ func (es *EnvSet) defaultUsage() {
 //	I directory
 //		search directory for include files.
 //
+// Env vars with usage "HIDDEN" won't be printed:
+//
+//	env.String("EXPERIMENTAL_OPTION", "", "HIDDEN")
+//
 // To change the destination for env var messages, call [*EnvSet.SetOutput].
 func (es *EnvSet) PrintDefaults() {
 	var isZeroValueErrs []error
 	es.VisitAll(func(envVar *EnvVar) {
+		if envVar.Usage == "HIDDEN" {
+			return
+		}
+
 		var b strings.Builder
 		fmt.Fprintf(&b, "  %s", envVar.Name)
 		name, usage := UnquoteUsage(envVar.Value, envVar.Usage)
