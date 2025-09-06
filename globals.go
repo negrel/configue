@@ -3,7 +3,9 @@ package configue
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"path"
 )
 
 // ErrorHandling defines how [EnvSet.Parse] behaves if the parse fails.
@@ -21,7 +23,7 @@ var (
 	// CommandLine is the default set of command-line options, parsed from
 	// environments variable and flags. The top-level functions such as BoolVar,
 	// and so on are wrappers for the methods of CommandLine.
-	CommandLine = New("", ExitOnError, NewEnv(""), NewFlag())
+	CommandLine = New("", ExitOnError, NewINI(iniFile()), NewEnv(""), NewFlag())
 	// Usage prints a usage message documenting all defined command-line env vars
 	//  to CommandLine's output, which by default is os.Stderr. It is called when
 	// an error occurs while parsing env vars. The function is a variable that may
@@ -53,4 +55,21 @@ func cliUsage() {
 // program.
 func Parse() error {
 	return CommandLine.Parse()
+}
+
+// iniFile tries to open os.UserConfigDir() + / + cmd + / + config.ini file and
+// returns it. If it fails, a nil reader is returned.
+func iniFile() io.Reader {
+	cfgDir, err := os.UserConfigDir()
+	if err != nil {
+		return nil
+	}
+	cmd := path.Base(os.Args[0])
+	fpath := path.Join(cfgDir, cmd, "config.ini")
+
+	f, err := os.Open(fpath)
+	if err != nil {
+		return nil
+	}
+	return f
 }

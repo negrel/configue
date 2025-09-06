@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/negrel/configue/env"
+	"github.com/negrel/configue/ini"
 	"github.com/negrel/configue/option"
 )
 
@@ -18,7 +19,7 @@ type Backend interface {
 	Parse() error
 	Parsed() bool
 	Set(name, value string) error
-	Visit(fn func(string, option.Value))
+	Visit(fn func(option.Option))
 	PrintDefaults()
 	SetOutput(io.Writer)
 }
@@ -30,6 +31,7 @@ type Value interface {
 
 var _ Backend = &envBackend{}
 var _ Backend = &flagBackend{}
+var _ Backend = &iniBackend{}
 
 type envBackend struct {
 	*env.EnvSet
@@ -82,9 +84,11 @@ func (eb *envBackend) Parse() error {
 }
 
 // Visit implements Backend.
-func (eb *envBackend) Visit(fn func(string, option.Value)) {
+func (eb *envBackend) Visit(fn func(option.Option)) {
 	eb.EnvSet.Visit(func(envVar *env.EnvVar) {
-		fn(eb.nameMap[envVar.Name], envVar.Value)
+		opt := *envVar
+		opt.Name = eb.nameMap[envVar.Name]
+		fn(opt)
 	})
 }
 
@@ -140,9 +144,11 @@ func (fb *flagBackend) Parse() error {
 }
 
 // Visit implements Backend.
-func (fb *flagBackend) Visit(fn func(string, option.Value)) {
+func (fb *flagBackend) Visit(fn func(option.Option)) {
 	fb.FlagSet.Visit(func(flag *flag.Flag) {
-		fn(fb.nameMap[flag.Name], flag.Value)
+		opt := option.Option(*flag)
+		opt.Name = fb.nameMap[flag.Name]
+		fn(opt)
 	})
 }
 
@@ -154,4 +160,53 @@ func (fb *flagBackend) PrintDefaults() {
 		_, _ = fmt.Fprintln(fb.Output(), "Flags:")
 	}
 	fb.FlagSet.PrintDefaults()
+}
+
+type iniBackend struct {
+	*ini.PropSet
+	r io.Reader
+}
+
+// NewINI returns a new INI based backend.
+func NewINI(r io.Reader) Backend {
+	ib := &iniBackend{ini.NewPropSet("", ContinueOnError), r}
+	ib.Usage = func() {}
+	return ib
+}
+
+// Init implements Backend.
+func (ib *iniBackend) Init(name string) {
+	ib.PropSet.Init(name, ContinueOnError)
+}
+
+// Var implements Backend.
+func (ib *iniBackend) Var(val Value, name, usage string) {
+	ib.PropSet.Var(val, name, usage)
+}
+
+// Set sets the value of the named command-line option.
+func (ib *iniBackend) Set(name, value string) error {
+	return ib.PropSet.Set(name, value)
+}
+
+// Parse implements Backend.
+func (ib *iniBackend) Parse() error {
+	return ib.PropSet.Parse(ib.r)
+}
+
+// Visit implements Backend.
+func (ib *iniBackend) Visit(fn func(option.Option)) {
+	ib.PropSet.Visit(func(prop *ini.Property) {
+		fn(*prop)
+	})
+}
+
+// PrintDefaults implements Backend.
+func (ib *iniBackend) PrintDefaults() {
+	if name := ib.Name(); name != "" {
+		_, _ = fmt.Fprintf(ib.Output(), "Properties of %v:\n", name)
+	} else {
+		_, _ = fmt.Fprintln(ib.Output(), "Properties:")
+	}
+	ib.PropSet.PrintDefaults()
 }

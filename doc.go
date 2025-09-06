@@ -1,6 +1,6 @@
 /*
 Package configue facilitate parsing command-line options from multiple sources
-(environments variables, flag, etc).
+(environments variables, flag, INI files, etc).
 
 # Usage
 
