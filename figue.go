@@ -6,6 +6,7 @@ package configue
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"os"
 
@@ -21,9 +22,7 @@ type Figue struct {
 	errorHandling ErrorHandling
 }
 
-// New returns a new Fig instance. This function panics if 0 backend is
-// provided. Backends orders matters as it defines priority. You should provides
-// backends in ascending order.
+// New returns a new Fig instance. This function panics if 0 backend is provided.
 func New(
 	name string,
 	errorHandling ErrorHandling,
@@ -55,15 +54,8 @@ func New(
 // in particular, [Set] would decompose the comma-separated string into the
 // slice.
 func (f *Figue) Var(val option.Value, path string, usage string) {
-	done := make(map[Backend]struct{})
-
 	for _, b := range f.backends {
-		if _, ok := done[b]; ok {
-			continue
-		}
-
 		b.Var(val, path, usage)
-		done[b] = struct{}{}
 	}
 }
 
@@ -106,20 +98,12 @@ func (f *Figue) usage() {
 
 // PrintDefaults prints, to standard error unless configured otherwise, the
 // default values of all defined command-line options. To do so, it calls in
-// reverse order [Backend.PrintDefaults] of all backends. Backend with higher
-// priority are printed first.
+// reverse order [Backend.PrintDefaults] of all backends.
 func (f *Figue) PrintDefaults() {
-	done := make(map[Backend]struct{})
-
 	for i := len(f.backends) - 1; i >= 0; i-- {
 		b := f.backends[i]
-
-		if _, ok := done[b]; ok {
-			continue
-		}
-
 		b.PrintDefaults()
-		done[b] = struct{}{}
+		_, _ = fmt.Fprintln(f.Output())
 	}
 }
 
@@ -144,11 +128,11 @@ func (f *Figue) Output() io.Writer {
 // Parsed reports whether Figue.Parse has been called.
 func (f *Figue) Parsed() bool {
 	for _, b := range f.backends {
-		if !b.Parsed() {
-			return false
+		if b.Parsed() {
+			return true
 		}
 	}
-	return len(f.backends) > 0
+	return false
 }
 
 // Set sets the value of the named command-line option.
