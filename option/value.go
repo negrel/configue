@@ -218,20 +218,20 @@ func NewUint(val uint, p *uint) *Uint {
 }
 
 // Set implements Value.
-func (i *Uint) Set(s string) error {
+func (u *Uint) Set(s string) error {
 	v, err := strconv.ParseUint(s, 0, strconv.IntSize)
 	if err != nil {
 		err = numError(err)
 	}
-	*i = Uint(v)
+	*u = Uint(v)
 	return err
 }
 
 // Get implements Getter.
-func (i *Uint) Get() any { return uint(*i) }
+func (u *Uint) Get() any { return uint(*u) }
 
 // String implements Value.
-func (i *Uint) String() string { return strconv.FormatUint(uint64(*i), 10) }
+func (u *Uint) String() string { return strconv.FormatUint(uint64(*u), 10) }
 
 type Uint64 uint64
 
@@ -256,3 +256,10 @@ func (i *Uint64) Get() any { return uint64(*i) }
 
 // String implements Value.
 func (i *Uint64) String() string { return strconv.FormatUint(uint64(*i), 10) }
+
+// Func implements Value.
+type Func func(string) error
+
+func (f Func) Set(s string) error { return f(s) }
+
+func (f Func) String() string { return "" }
