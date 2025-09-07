@@ -7,10 +7,10 @@ import (
 	"path"
 )
 
-// ErrorHandling defines how [EnvSet.Parse] behaves if the parse fails.
+// ErrorHandling defines how [Figue.Parse] behaves if the parse fails.
 type ErrorHandling = flag.ErrorHandling
 
-// These constants cause [EnvSet.Parse] to behave as described if the parse
+// These constants cause [Figue.Parse] to behave as described if the parse
 // fails.
 const (
 	ContinueOnError ErrorHandling = flag.ContinueOnError // Return a descriptive error.
@@ -20,11 +20,12 @@ const (
 
 var (
 	// CommandLine is the default set of command-line options, parsed from
-	// environments variable and flags. The top-level functions such as BoolVar,
-	// and so on are wrappers for the methods of CommandLine.
+	// INI file, environments variable and flags in this specific order. The
+	// top-level functions such as BoolVar, and so on are wrappers for the methods
+	// of CommandLine.
 	CommandLine = New("", ExitOnError, NewINI(File("./", "config.ini")), NewEnv(""), NewFlag())
-	// Usage prints a usage message documenting all defined command-line env vars
-	//  to CommandLine's output, which by default is os.Stderr. It is called when
+	// Usage prints a usage message documenting all defined command-line options
+	// to CommandLine's output, which by default is os.Stderr. It is called when
 	// an error occurs while parsing env vars. The function is a variable that may
 	// be changed to point to a custom function. By default it prints a simple
 	// header and calls PrintDefaults; for details about the format of the Output
