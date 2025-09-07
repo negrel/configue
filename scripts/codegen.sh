@@ -151,6 +151,14 @@ func ($METHOD_RECEIVER $METHOD_TYPE) Uint64Var(p *uint64, name string, value uin
 	$METHOD_RECEIVER.Var(option.NewUint64(value, p), name, usage)
 }
 
+// Func defines ${OPTION_ARTICLE} ${OPTION_NAME} with the specified name and
+// usage string. Each time the ${OPTION_NAME} is seen, fn is called with the
+// value of the ${OPTION_NAME}. If fn returns a non-nil error, it will be
+// treated as a value parsing error.
+func ($METHOD_RECEIVER $METHOD_TYPE) Func(name, usage string, fn func(string) error) {
+	$METHOD_RECEIVER.Var(option.Func(fn), name, usage)
+}
+
 EOF
 
 cat <<EOF
@@ -331,6 +339,14 @@ func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshal
 // decompose the comma-separated string into the slice.
 func Var(value option.Value, name string, usage string) {
 	CommandLine.Var(value, name, usage)
+}
+
+// Func defines ${OPTION_ARTICLE} ${OPTION_NAME} with the specified name and
+// usage string. Each time the ${OPTION_NAME} is seen, fn is called with the
+// value of the ${OPTION_NAME}. If fn returns a non-nil error, it will be
+// treated as a value parsing error.
+func Func(name, usage string, fn func(string) error) {
+	CommandLine.Func(name, usage, fn)
 }
 
 EOF

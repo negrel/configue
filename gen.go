@@ -146,6 +146,14 @@ func (f *Figue) Uint64Var(p *uint64, name string, value uint64, usage string) {
 	f.Var(option.NewUint64(value, p), name, usage)
 }
 
+// Func defines an option with the specified name and
+// usage string. Each time the option is seen, fn is called with the
+// value of the option. If fn returns a non-nil error, it will be
+// treated as a value parsing error.
+func (f *Figue) Func(name, usage string, fn func(string) error) {
+	f.Var(option.Func(fn), name, usage)
+}
+
 
 // PrintDefaults prints, to standard error unless configured otherwise,
 // a usage message showing the default settings of all defined
@@ -323,5 +331,13 @@ func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshal
 // decompose the comma-separated string into the slice.
 func Var(value option.Value, name string, usage string) {
 	CommandLine.Var(value, name, usage)
+}
+
+// Func defines an option with the specified name and
+// usage string. Each time the option is seen, fn is called with the
+// value of the option. If fn returns a non-nil error, it will be
+// treated as a value parsing error.
+func Func(name, usage string, fn func(string) error) {
+	CommandLine.Func(name, usage, fn)
 }
 
