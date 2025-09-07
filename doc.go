@@ -39,9 +39,9 @@ they are all pointers; if you bind to variables, they're values.
 
 # Command line option syntax
 
-Options are loaded/parsed by [Backend]. Built-in flag and environment variable
-based backends are provided by [NewFlag] and [NewEnv] respectively. They parse
-options value the same way. See [`option`](./option#pkg-overview) documentation
-for more information.
+Options are loaded/parsed by [Backend]. Built-in flag, environment variable and
+INI file based backends are provided by [NewFlag], [NewEnv], [NewINI]
+respectively. They parse options value the same way. See
+[`option`](./option#pkg-overview) documentation for more information.
 */
 package configue
