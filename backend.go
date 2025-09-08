@@ -16,11 +16,10 @@ import (
 // Backend define options registry and parser.
 type Backend interface {
 	Init(name string)
-	Var(val Value, name, usage string)
+	Var(val Value, name, usage string) string
 	Parse() error
 	Parsed() bool
 	Set(name, value string) error
-	Visit(fn func(option.Option))
 	PrintDefaults()
 	SetOutput(io.Writer)
 }
@@ -68,10 +67,11 @@ func (env *Env) Init(name string) {
 }
 
 // Var implements Backend.
-func (env *Env) Var(val Value, name, usage string) {
+func (env *Env) Var(val Value, name, usage string) string {
 	envName := env.envName(name)
 	env.EnvSet.Var(val, envName, usage)
 	env.nameMap[envName] = name
+	return envName
 }
 
 // Set sets the value of the named command-line option.
@@ -80,7 +80,7 @@ func (env *Env) Set(name, value string) error {
 	return env.EnvSet.Set(envName, value)
 }
 
-// Parse implements Backend.
+// Parse implements Backend by parsing os.Environ().
 func (env *Env) Parse() error {
 	return env.EnvSet.Parse(os.Environ())
 }
@@ -102,7 +102,6 @@ func (env *Env) PrintDefaults() {
 		_, _ = fmt.Fprintln(env.Output(), "Environment variables:")
 	}
 	env.EnvSet.PrintDefaults()
-	_, _ = fmt.Fprintln(env.Output())
 }
 
 // Flag defines a flag based Backend implementation.
@@ -130,10 +129,11 @@ func (flag *Flag) Init(name string) {
 }
 
 // Var implements Backend.
-func (flag *Flag) Var(val Value, name, usage string) {
+func (flag *Flag) Var(val Value, name, usage string) string {
 	flagName := flag.flagName(name)
 	flag.FlagSet.Var(val, flagName, usage)
 	flag.nameMap[flagName] = name
+	return flagName
 }
 
 // Set sets the value of the named command-line option.
@@ -142,14 +142,25 @@ func (flag *Flag) Set(name, value string) error {
 	return flag.FlagSet.Set(flagName, value)
 }
 
-// Parse implements Backend.
+// Parse implements Backend by parsing flags from os.Args[1:].
 func (flag *Flag) Parse() error {
 	return flag.FlagSet.Parse(os.Args[1:])
 }
 
-// Visit implements Backend.
+// Visit visits the flags in lexicographical order, calling fn for each. It
+// visits only those flags that have been set.
 func (fb *Flag) Visit(fn func(option.Option)) {
 	fb.FlagSet.Visit(func(flag *flag.Flag) {
+		opt := option.Option(*flag)
+		opt.Name = fb.nameMap[flag.Name]
+		fn(opt)
+	})
+}
+
+// VisitAll visits the flags in lexicographical order, calling fn for each. It
+// visits all flags, even those not set.
+func (fb *Flag) VisitAll(fn func(option.Option)) {
+	fb.FlagSet.VisitAll(func(flag *flag.Flag) {
 		opt := option.Option(*flag)
 		opt.Name = fb.nameMap[flag.Name]
 		fn(opt)
@@ -164,7 +175,6 @@ func (flag *Flag) PrintDefaults() {
 		_, _ = fmt.Fprintln(flag.Output(), "Flags:")
 	}
 	flag.FlagSet.PrintDefaults()
-	_, _ = fmt.Fprintln(flag.Output())
 }
 
 // Ini defines an INI file based Backend implementation.
@@ -187,8 +197,9 @@ func (ini *Ini) Init(name string) {
 }
 
 // Var implements Backend.
-func (ini *Ini) Var(val Value, name, usage string) {
+func (ini *Ini) Var(val Value, name, usage string) string {
 	ini.PropSet.Var(val, name, usage)
+	return name
 }
 
 // Set sets the value of the named command-line option.
@@ -205,9 +216,8 @@ func (ini *Ini) Parse() error {
 		}
 		return err
 	}
-	defer f.Close()
 
-	return ini.PropSet.Parse(f)
+	return errors.Join(ini.PropSet.Parse(f), f.Close())
 }
 
 // Visit implements Backend.
@@ -229,5 +239,4 @@ func (ini *Ini) PrintDefaults() {
 	} else {
 		_, _ = fmt.Fprintf(ini.Output(), "Configuration file is located at %v\n", ini.FilePath)
 	}
-	_, _ = fmt.Fprintln(ini.Output())
 }
