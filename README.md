@@ -10,12 +10,19 @@
 [![PRs welcome card](https://img.shields.io/badge/PRs-Welcome-brightgreen)](https://github.com/negrel/configue/pulls)
 ![Go version card](https://img.shields.io/github/go-mod/go-version/negrel/configue)
 
-`configue` is a simple, extensible and dependency-free configuration library for
-Go. It implements an API similar to `flag` package from standard library to load
-and merge options from multiple sources.
+`configue` is a library for reading configuration from different sources in Go.
+It is a simpler alternative to popular configuration loading libraries
+([spf13/viper](https://github.com/knadh/koanf#alternative-to-viper),
+[knadh/koanf](https://github.com/knadh/koanf),
+[etc](https://awesome-go.com/configuration/)).
 
-Flags, environment variables and INI files are built-in but you can add custom
-sources by implementing the `Backend` interface.
+`configue` has package for reading configuration from environment variables,
+INI files and command line flags. It is easy to plug in custom source by
+implementing the
+[`Backend`](https://pkg.go.dev/github.com/negrel/configue#Backend) interface.
+
+There is no external dependency and the API is strongly inspired by the `flag`
+package from the standard library.
 
 ## Getting started
 
@@ -27,7 +34,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"os"
 	"runtime"
 
 	"github.com/negrel/configue"
@@ -39,34 +45,28 @@ type Option struct {
 }
 
 func main() {
-	iniFile, err := os.Open("./config.ini")
-	if err != nil {
-		// handle error.
-	}
-
 	// Create backends.
 	env := configue.NewEnv("MYAPP")
 	flag := configue.NewFlag()
+	ini := configue.NewINI(configue.File("./", "config.ini"))
 
+	// Create a figue that loads from flags, INI file, env vars and flags in this
+	// specific order.
 	figue := configue.New(
 		"",                       // Subcommand name.
 		configue.ContinueOnError, // Error handling strategy.
-		configue.NewINI(iniFile), // INI file backend.
-		env,                      // Environment variable backend with MYAPP_ prefix.
-		flag,                     // Go's std `flag` backend.
+		flag,
+		ini,
+		env,
+		flag,
 	)
-
-	// Custom usage.
 	figue.Usage = func() {
 		_, _ = fmt.Fprintln(figue.Output(), "myapp - a great app")
 		_, _ = fmt.Fprintln(figue.Output())
 		_, _ = fmt.Fprintln(figue.Output(), "Usage:")
 		_, _ = fmt.Fprintln(figue.Output(), "  myapp [flags]")
 		_, _ = fmt.Fprintln(figue.Output())
-		flag.PrintDefaults()
-		_, _ = fmt.Fprintln(figue.Output())
-		env.PrintDefaults()
-		// We don't print INI defaults.
+		figue.PrintDefaults()
 	}
 
 	// Define options.
@@ -74,8 +74,11 @@ func main() {
 	figue.BoolVar(&options.Debug, "debug", false, "enable debug logs")
 	figue.IntVar(&options.MaxProc, "max.proc", runtime.NumCPU(), "maximum number of CPU that can be executed simultaneously")
 
+	// Flag only option.
+	flag.StringVar(&ini.FilePath, "config", ini.FilePath, "custom config file path")
+
 	// Parse options.
-	err = figue.Parse()
+	err := figue.Parse()
 	if errors.Is(err, configue.ErrHelp) {
 		return
 	}
@@ -93,6 +96,8 @@ Usage:
   myapp [flags]
 
 Flags:
+  -config string
+        custom config file path (default "/home/anegrel/.config/myapp/config.ini")
   -debug
         enable debug logs
   -max-proc value
@@ -103,6 +108,8 @@ Environment variables:
         enable debug logs
   MYAPP_MAX_PROC int
         maximum number of CPU that can be executed simultaneously (default 16)
+
+Configuration file is located at /home/anegrel/.config/myapp/config.ini
 ```
 
 For a real example, see [Prisme Analytics](https://github.com/prismelabs/analytics/blob/e6522e6502fef0ceb3f5df79f17a6a3b4b70ba02/cmd/prisme/main.go#L42-L98)
