@@ -66,7 +66,7 @@ func (es *EnvSet) Var(val option.Value, name string, usage string) {
 		panic(es.sprintf("env var %q contains =", name))
 	}
 
-	e := &EnvVar{name, usage, val, val.String()}
+	e := &EnvVar{Name: name, Usage: usage, Value: val, DefValue: val.String()}
 	_, exists := es.formal[name]
 	if exists {
 		var msg string

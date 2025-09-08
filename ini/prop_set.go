@@ -157,7 +157,7 @@ func (ps *PropSet) Var(val option.Value, name string, usage string) {
 		panic(ps.sprintf("property %q contains =", name))
 	}
 
-	e := &Property{name, usage, val, val.String()}
+	e := &Property{Name: name, Usage: usage, Value: val, DefValue: val.String()}
 	_, exists := ps.formal[name]
 	if exists {
 		var msg string
