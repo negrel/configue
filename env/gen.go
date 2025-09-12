@@ -154,7 +154,6 @@ func (es *EnvSet) Func(name, usage string, fn func(string) error) {
 	es.Var(option.Func(fn), name, usage)
 }
 
-
 // PrintDefaults prints, to standard error unless configured otherwise,
 // a usage message showing the default settings of all defined
 // env vars.
@@ -340,4 +339,3 @@ func Var(value option.Value, name string, usage string) {
 func Func(name, usage string, fn func(string) error) {
 	CommandLine.Func(name, usage, fn)
 }
-
