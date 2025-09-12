@@ -146,6 +146,22 @@ func ({{ .MethodReceiver }} {{ .MethodType }}) Uint64Var(p *uint64, name string,
 	{{ .MethodReceiver }}.Var(option.NewUint64(value, p), name, usage)
 }
 
+// Uint64Slice defines a slice of uint64 option with specified name, default
+// value, and usage string. The return value is the address of an uint64 slice
+// variable that stores the value of the option.
+func ({{ .MethodReceiver }} {{ .MethodType }}) Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
+	u := new([]uint64)
+	{{ .MethodReceiver }}.Uint64SliceVar(u, name, value, usage)
+	return u
+}
+
+// Uint64SliceVar defines a slice uint64 option with specified name, default
+// value, and usage string. The argument p points to an uint64 variable in which
+// to store the value of the option.
+func ({{ .MethodReceiver }} {{ .MethodType }}) Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
+	{{ .MethodReceiver }}.Var(option.NewSlice[uint64](value, p), name, usage)
+}
+
 // Func defines {{ .OptionArticle }} {{ .OptionName }} with the specified name and
 // usage string. Each time the {{ .OptionName }} is seen, fn is called with the
 // value of the {{ .OptionName }}. If fn returns a non-nil error, it will be

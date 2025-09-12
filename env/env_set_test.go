@@ -22,6 +22,7 @@ func TestEnvSet(t *testing.T) {
 				s := es.String("string", "foo", "a string env var")
 				u := es.Uint("uint", 1234, "an uint env var")
 				u64 := es.Uint64("uint64", 12345, "an uint64 env var")
+				u64s := es.Uint64Slice("uint64.slice", []uint64{12345}, "an uint64 slice")
 
 				if es.Parsed() {
 					t.Fatal("EnvSet.Parsed() should return false")
@@ -37,7 +38,7 @@ func TestEnvSet(t *testing.T) {
 
 				if *b != true || *d != time.Second || *f != math.Pi ||
 					*i != -1234 || *i64 != -12345 || *s != "foo" ||
-					*u != 1234 || *u64 != 12345 {
+					*u != 1234 || *u64 != 12345 || (*u64s)[0] != 12345 {
 					t.Fatal("unexpected value")
 				}
 			})
@@ -52,6 +53,7 @@ func TestEnvSet(t *testing.T) {
 				s := es.String("string", "foo", "a string env var")
 				u := es.Uint("uint", 1234, "an uint env var")
 				u64 := es.Uint64("uint64", 12345, "an uint64 env var")
+				u64s := es.Uint64Slice("uint64_slice", []uint64{12345}, "an uint64 slice")
 
 				err := es.Parse([]string{
 					"bool=f",
@@ -62,6 +64,7 @@ func TestEnvSet(t *testing.T) {
 					"string=bar",
 					"uint=100",
 					"uint64=101",
+					"uint64_slice=1,2,56,239232",
 				})
 				if err != nil {
 					t.Fatal("unexpected parse error")
@@ -72,7 +75,9 @@ func TestEnvSet(t *testing.T) {
 
 				if *b != false || *d != time.Second/2 || *f != 1.23 ||
 					*i != -1 || *i64 != -2 || *s != "bar" ||
-					*u != 100 || *u64 != 101 {
+					*u != 100 || *u64 != 101 ||
+					(*u64s)[0] != 1 || (*u64s)[1] != 2 || (*u64s)[2] != 56 ||
+					(*u64s)[3] != 239232 {
 					t.Fatal("unexpected value")
 				}
 			})

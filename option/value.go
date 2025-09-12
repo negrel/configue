@@ -1,5 +1,7 @@
 package option
 
+// This file contains flag.Value implementation from the standard library.
+
 import (
 	"encoding"
 	"flag"
