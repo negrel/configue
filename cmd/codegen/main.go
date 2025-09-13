@@ -6,6 +6,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/negrel/configue"
 )
 
@@ -41,7 +42,6 @@ func main() {
 	err := figue.Parse()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
-		println(err.Error())
 		os.Exit(1)
 	}
 
@@ -58,6 +58,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	tpl := template.Must(template.New("codegen").Parse(goTemplate))
-	tpl.Execute(w, params)
+	tpl := template.Must(template.New("codegen").
+		Funcs(sprig.FuncMap()).
+		Parse(goTemplate))
+	err = tpl.Execute(w, params)
+	if err != nil {
+		println("failed to execute template:", err.Error())
+		os.Exit(1)
+	}
 }

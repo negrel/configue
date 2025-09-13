@@ -1,5 +1,7 @@
 package ini
 
+// This file contains generated code, do not edit.
+
 import (
 	"encoding"
 	"time"
@@ -7,167 +9,660 @@ import (
 	"github.com/negrel/configue/option"
 )
 
-// Bool defines a bool option with specified name, default value, and usage
-// string. The return value is the address of a bool variable that stores the
-// value of the option.
-func (ps *PropSet) Bool(name string, value bool, usage string) *bool {
-	b := new(bool)
-	ps.BoolVar(b, name, value, usage)
-	return b
+// Bool defines a bool option with specified
+// name, default value, and usage string. The return value is the address of
+// a bool variable that stores the value of the option.
+func (ps *PropSet) Bool(
+	name string,
+	value bool,
+	usage string,
+) *bool {
+	t := new(bool)
+	ps.BoolVar(t, name, value, usage)
+	return t
 }
 
-// BoolVar defines a bool option with specified name, default value, and usage
-// string.
-// The argument p points to a bool variable in which to store the value of the
-// option.
-func (ps *PropSet) BoolVar(p *bool, name string, value bool, usage string) {
+// Bool defines a bool option with specified
+// name, default value, and usage string. The argument p points to a bool
+// variable in which to store the value of the option.
+func (ps *PropSet) BoolVar(
+	p *bool,
+	name string,
+	value bool,
+	usage string,
+) {
 	ps.Var(option.NewBool(value, p), name, usage)
 }
 
-// Duration defines a time.Duration option with specified name, default value,
-// and usage string. The return value is the address of a time.Duration variable
-// that stores the value of the option. The option accepts a value acceptable to
-// time.ParseDuration.
-func (ps *PropSet) Duration(name string, value time.Duration, usage string) *time.Duration {
-	d := new(time.Duration)
-	ps.DurationVar(d, name, value, usage)
-	return d
+// Bool defines a slice of bool option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of bool variable that stores the value of the option.
+func (ps *PropSet) BoolSlice(
+	name string,
+	value []bool,
+	usage string,
+) *[]bool {
+	t := new([]bool)
+	ps.BoolSliceVar(t, name, value, usage)
+	return t
 }
 
-// DurationVar defines a time.Duration option with specified name, default value,
-// and usage string. The argument p points to a time.Duration variable in which
-// to store the value of the option. The option accepts a value acceptable to
-// time.ParseDuration.
-func (ps *PropSet) DurationVar(p *time.Duration, name string, value time.Duration, usage string) {
-	ps.Var(option.NewDuration(value, p), name, usage)
+// BoolSliceVar defines a slice of bool option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of bool variable in which to store the value of the option.
+func (ps *PropSet) BoolSliceVar(
+	p *[]bool,
+	name string,
+	value []bool,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
 }
 
-// Float64 defines a float64 option with specified name, default value, and usage
-// string. The return value is the address of a float64 variable that stores the
-// value of the option.
-func (ps *PropSet) Float64(name string, value float64, usage string) *float64 {
-	f64 := new(float64)
-	ps.Float64Var(f64, name, value, usage)
-	return f64
+// Bool defines a bool property with
+// specified name, default value, and usage string. The return value is the
+// address of a bool variable that stores the value of
+// the property.
+func Bool(name string, value bool, usage string) *bool {
+	return CommandLine.Bool(name, value, usage)
 }
 
-// Float64Var defines a float64 option with specified name, default value, and
-// usage string. The argument p points to a float64 variable in which to store
-// the value of the option.
-func (ps *PropSet) Float64Var(p *float64, name string, value float64, usage string) {
+// BoolVar defines a bool property with
+// specified name, default value, and usage string. The argument p points to
+// a bool variable in which to store the value of the
+// property.
+func BoolVar(p *bool, name string, value bool, usage string) {
+	CommandLine.Var(option.NewBool(value, p), name, usage)
+}
+
+// BoolSlice defines a slice of bool property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of bool variable that stores the value of
+// the property.
+func BoolSlice(name string, value []bool, usage string) *[]bool {
+	return CommandLine.BoolSlice(name, value, usage)
+}
+
+// BoolSliceVar defines a slice of bool property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of bool variable in which to store the value of the
+// property.
+func BoolSliceVar(p *[]bool, name string, value []bool, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Float64 defines a float64 option with specified
+// name, default value, and usage string. The return value is the address of
+// a float64 variable that stores the value of the option.
+func (ps *PropSet) Float64(
+	name string,
+	value float64,
+	usage string,
+) *float64 {
+	t := new(float64)
+	ps.Float64Var(t, name, value, usage)
+	return t
+}
+
+// Float64 defines a float64 option with specified
+// name, default value, and usage string. The argument p points to a float64
+// variable in which to store the value of the option.
+func (ps *PropSet) Float64Var(
+	p *float64,
+	name string,
+	value float64,
+	usage string,
+) {
 	ps.Var(option.NewFloat64(value, p), name, usage)
 }
 
-// Int defines an int option with specified name, default value, and usage
-// string. The return value is the address of an int variable that stores the
-// value of the option.
-func (ps *PropSet) Int(name string, value int, usage string) *int {
-	i := new(int)
-	ps.IntVar(i, name, value, usage)
-	return i
+// Float64 defines a slice of float64 option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of float64 variable that stores the value of the option.
+func (ps *PropSet) Float64Slice(
+	name string,
+	value []float64,
+	usage string,
+) *[]float64 {
+	t := new([]float64)
+	ps.Float64SliceVar(t, name, value, usage)
+	return t
 }
 
-// IntVar defines an int option with specified name, default value, and usage
-// string. The argument p points to an int variable in which to store the value
-// of the option.
-func (ps *PropSet) IntVar(p *int, name string, value int, usage string) {
-	ps.Var(option.NewInt(value, p), name, usage)
+// Float64SliceVar defines a slice of float64 option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of float64 variable in which to store the value of the option.
+func (ps *PropSet) Float64SliceVar(
+	p *[]float64,
+	name string,
+	value []float64,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
 }
 
-// Int64 defines an int64 option with specified name, default value, and usage
-// string. The return value is the address of an int64 variable that stores the
-// value of the option.
-func (ps *PropSet) Int64(name string, value int64, usage string) *int64 {
-	i := new(int64)
-	ps.Int64Var(i, name, value, usage)
-	return i
+// Float64 defines a float64 property with
+// specified name, default value, and usage string. The return value is the
+// address of a float64 variable that stores the value of
+// the property.
+func Float64(name string, value float64, usage string) *float64 {
+	return CommandLine.Float64(name, value, usage)
 }
 
-// Int64Var defines an int64 option with specified name, default value, and
-// usage string. The argument p points to an int64 variable in which to store
-// the value of the option.
-func (ps *PropSet) Int64Var(p *int64, name string, value int64, usage string) {
-	ps.Var(option.NewInt64(value, p), name, usage)
+// Float64Var defines a float64 property with
+// specified name, default value, and usage string. The argument p points to
+// a float64 variable in which to store the value of the
+// property.
+func Float64Var(p *float64, name string, value float64, usage string) {
+	CommandLine.Var(option.NewFloat64(value, p), name, usage)
 }
 
-// String defines a string option with specified name, default value, and usage
-// string. The return value is the address of a string variable that stores the
-// value of the option.
-func (ps *PropSet) String(name string, value string, usage string) *string {
-	i := new(string)
-	ps.StringVar(i, name, value, usage)
-	return i
+// Float64Slice defines a slice of float64 property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of float64 variable that stores the value of
+// the property.
+func Float64Slice(name string, value []float64, usage string) *[]float64 {
+	return CommandLine.Float64Slice(name, value, usage)
 }
 
-// StringVar defines a string option with specified name, default value, and
-// usage string. The argument p points to a string variable in which to store
-// the value of the option.
-func (ps *PropSet) StringVar(p *string, name string, value string, usage string) {
+// Float64SliceVar defines a slice of float64 property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of float64 variable in which to store the value of the
+// property.
+func Float64SliceVar(p *[]float64, name string, value []float64, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// String defines a string option with specified
+// name, default value, and usage string. The return value is the address of
+// a string variable that stores the value of the option.
+func (ps *PropSet) String(
+	name string,
+	value string,
+	usage string,
+) *string {
+	t := new(string)
+	ps.StringVar(t, name, value, usage)
+	return t
+}
+
+// String defines a string option with specified
+// name, default value, and usage string. The argument p points to a string
+// variable in which to store the value of the option.
+func (ps *PropSet) StringVar(
+	p *string,
+	name string,
+	value string,
+	usage string,
+) {
 	ps.Var(option.NewString(value, p), name, usage)
 }
 
-// TextVar defines an option with a specified name, default value, and usage
-// string. The argument p must be a pointer to a variable that will hold the
-// value of the option, and p must implement encoding.TextUnmarshalps. If the
-// option is used, the option value will be passed to p's UnmarshalText
-// method. The type of the default value must be the same as the type of p.
-func (ps *PropSet) TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshaler, usage string) {
-	ps.Var(option.NewText(value, p), name, usage)
+// String defines a slice of string option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of string variable that stores the value of the option.
+func (ps *PropSet) StringSlice(
+	name string,
+	value []string,
+	usage string,
+) *[]string {
+	t := new([]string)
+	ps.StringSliceVar(t, name, value, usage)
+	return t
 }
 
-// Uint defines an uint option with specified name, default value, and usage
-// string. The return value is the address of an uint variable that stores the
-// value of the option.
-func (ps *PropSet) Uint(name string, value uint, usage string) *uint {
-	u := new(uint)
-	ps.UintVar(u, name, value, usage)
-	return u
+// StringSliceVar defines a slice of string option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of string variable in which to store the value of the option.
+func (ps *PropSet) StringSliceVar(
+	p *[]string,
+	name string,
+	value []string,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
 }
 
-// UintVar defines an uint option with specified name, default value, and usage
-// string. The argument p points to an uint variable in which to store the value of the option.
-func (ps *PropSet) UintVar(p *uint, name string, value uint, usage string) {
+// String defines a string property with
+// specified name, default value, and usage string. The return value is the
+// address of a string variable that stores the value of
+// the property.
+func String(name string, value string, usage string) *string {
+	return CommandLine.String(name, value, usage)
+}
+
+// StringVar defines a string property with
+// specified name, default value, and usage string. The argument p points to
+// a string variable in which to store the value of the
+// property.
+func StringVar(p *string, name string, value string, usage string) {
+	CommandLine.Var(option.NewString(value, p), name, usage)
+}
+
+// StringSlice defines a slice of string property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of string variable that stores the value of
+// the property.
+func StringSlice(name string, value []string, usage string) *[]string {
+	return CommandLine.StringSlice(name, value, usage)
+}
+
+// StringSliceVar defines a slice of string property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of string variable in which to store the value of the
+// property.
+func StringSliceVar(p *[]string, name string, value []string, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Uint defines an uint option with specified
+// name, default value, and usage string. The return value is the address of
+// an uint variable that stores the value of the option.
+func (ps *PropSet) Uint(
+	name string,
+	value uint,
+	usage string,
+) *uint {
+	t := new(uint)
+	ps.UintVar(t, name, value, usage)
+	return t
+}
+
+// Uint defines an uint option with specified
+// name, default value, and usage string. The argument p points to a uint
+// variable in which to store the value of the option.
+func (ps *PropSet) UintVar(
+	p *uint,
+	name string,
+	value uint,
+	usage string,
+) {
 	ps.Var(option.NewUint(value, p), name, usage)
 }
 
-// Uint64 defines an uint64 option with specified name, default value, and usage
-// string. The return value is the address of an uint64 variable that stores the
-// value of the option.
-func (ps *PropSet) Uint64(name string, value uint64, usage string) *uint64 {
-	u := new(uint64)
-	ps.Uint64Var(u, name, value, usage)
-	return u
+// Uint defines a slice of uint option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of uint variable that stores the value of the option.
+func (ps *PropSet) UintSlice(
+	name string,
+	value []uint,
+	usage string,
+) *[]uint {
+	t := new([]uint)
+	ps.UintSliceVar(t, name, value, usage)
+	return t
 }
 
-// Uint64Var defines an uint64 option with specified name, default value, and
-// usage string. The argument p points to an uint64 variable in which to store
-// the value of the option.
-func (ps *PropSet) Uint64Var(p *uint64, name string, value uint64, usage string) {
+// UintSliceVar defines a slice of uint option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of uint variable in which to store the value of the option.
+func (ps *PropSet) UintSliceVar(
+	p *[]uint,
+	name string,
+	value []uint,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Uint defines an uint property with
+// specified name, default value, and usage string. The return value is the
+// address of an uint variable that stores the value of
+// the property.
+func Uint(name string, value uint, usage string) *uint {
+	return CommandLine.Uint(name, value, usage)
+}
+
+// UintVar defines an uint property with
+// specified name, default value, and usage string. The argument p points to
+// an uint variable in which to store the value of the
+// property.
+func UintVar(p *uint, name string, value uint, usage string) {
+	CommandLine.Var(option.NewUint(value, p), name, usage)
+}
+
+// UintSlice defines a slice of uint property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of uint variable that stores the value of
+// the property.
+func UintSlice(name string, value []uint, usage string) *[]uint {
+	return CommandLine.UintSlice(name, value, usage)
+}
+
+// UintSliceVar defines a slice of uint property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of uint variable in which to store the value of the
+// property.
+func UintSliceVar(p *[]uint, name string, value []uint, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Uint64 defines an uint64 option with specified
+// name, default value, and usage string. The return value is the address of
+// an uint64 variable that stores the value of the option.
+func (ps *PropSet) Uint64(
+	name string,
+	value uint64,
+	usage string,
+) *uint64 {
+	t := new(uint64)
+	ps.Uint64Var(t, name, value, usage)
+	return t
+}
+
+// Uint64 defines an uint64 option with specified
+// name, default value, and usage string. The argument p points to a uint64
+// variable in which to store the value of the option.
+func (ps *PropSet) Uint64Var(
+	p *uint64,
+	name string,
+	value uint64,
+	usage string,
+) {
 	ps.Var(option.NewUint64(value, p), name, usage)
 }
 
-// Uint64Slice defines a slice of uint64 option with specified name, default
-// value, and usage string. The return value is the address of an uint64 slice
-// variable that stores the value of the option.
-func (ps *PropSet) Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
-	u := new([]uint64)
-	ps.Uint64SliceVar(u, name, value, usage)
-	return u
+// Uint64 defines a slice of uint64 option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of uint64 variable that stores the value of the option.
+func (ps *PropSet) Uint64Slice(
+	name string,
+	value []uint64,
+	usage string,
+) *[]uint64 {
+	t := new([]uint64)
+	ps.Uint64SliceVar(t, name, value, usage)
+	return t
 }
 
-// Uint64SliceVar defines a slice uint64 option with specified name, default
-// value, and usage string. The argument p points to an uint64 variable in which
-// to store the value of the option.
-func (ps *PropSet) Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
-	ps.Var(option.NewSlice[uint64](value, p), name, usage)
+// Uint64SliceVar defines a slice of uint64 option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of uint64 variable in which to store the value of the option.
+func (ps *PropSet) Uint64SliceVar(
+	p *[]uint64,
+	name string,
+	value []uint64,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
 }
 
-// Func defines a property with the specified name and
-// usage string. Each time the property is seen, fn is called with the
-// value of the property. If fn returns a non-nil error, it will be
-// treated as a value parsing error.
-func (ps *PropSet) Func(name, usage string, fn func(string) error) {
-	ps.Var(option.Func(fn), name, usage)
+// Uint64 defines an uint64 property with
+// specified name, default value, and usage string. The return value is the
+// address of an uint64 variable that stores the value of
+// the property.
+func Uint64(name string, value uint64, usage string) *uint64 {
+	return CommandLine.Uint64(name, value, usage)
+}
+
+// Uint64Var defines an uint64 property with
+// specified name, default value, and usage string. The argument p points to
+// an uint64 variable in which to store the value of the
+// property.
+func Uint64Var(p *uint64, name string, value uint64, usage string) {
+	CommandLine.Var(option.NewUint64(value, p), name, usage)
+}
+
+// Uint64Slice defines a slice of uint64 property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of uint64 variable that stores the value of
+// the property.
+func Uint64Slice(name string, value []uint64, usage string) *[]uint64 {
+	return CommandLine.Uint64Slice(name, value, usage)
+}
+
+// Uint64SliceVar defines a slice of uint64 property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of uint64 variable in which to store the value of the
+// property.
+func Uint64SliceVar(p *[]uint64, name string, value []uint64, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Int defines an int option with specified
+// name, default value, and usage string. The return value is the address of
+// an int variable that stores the value of the option.
+func (ps *PropSet) Int(
+	name string,
+	value int,
+	usage string,
+) *int {
+	t := new(int)
+	ps.IntVar(t, name, value, usage)
+	return t
+}
+
+// Int defines an int option with specified
+// name, default value, and usage string. The argument p points to a int
+// variable in which to store the value of the option.
+func (ps *PropSet) IntVar(
+	p *int,
+	name string,
+	value int,
+	usage string,
+) {
+	ps.Var(option.NewInt(value, p), name, usage)
+}
+
+// Int defines a slice of int option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of int variable that stores the value of the option.
+func (ps *PropSet) IntSlice(
+	name string,
+	value []int,
+	usage string,
+) *[]int {
+	t := new([]int)
+	ps.IntSliceVar(t, name, value, usage)
+	return t
+}
+
+// IntSliceVar defines a slice of int option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of int variable in which to store the value of the option.
+func (ps *PropSet) IntSliceVar(
+	p *[]int,
+	name string,
+	value []int,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Int defines an int property with
+// specified name, default value, and usage string. The return value is the
+// address of an int variable that stores the value of
+// the property.
+func Int(name string, value int, usage string) *int {
+	return CommandLine.Int(name, value, usage)
+}
+
+// IntVar defines an int property with
+// specified name, default value, and usage string. The argument p points to
+// an int variable in which to store the value of the
+// property.
+func IntVar(p *int, name string, value int, usage string) {
+	CommandLine.Var(option.NewInt(value, p), name, usage)
+}
+
+// IntSlice defines a slice of int property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of int variable that stores the value of
+// the property.
+func IntSlice(name string, value []int, usage string) *[]int {
+	return CommandLine.IntSlice(name, value, usage)
+}
+
+// IntSliceVar defines a slice of int property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of int variable in which to store the value of the
+// property.
+func IntSliceVar(p *[]int, name string, value []int, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Int64 defines an int64 option with specified
+// name, default value, and usage string. The return value is the address of
+// an int64 variable that stores the value of the option.
+func (ps *PropSet) Int64(
+	name string,
+	value int64,
+	usage string,
+) *int64 {
+	t := new(int64)
+	ps.Int64Var(t, name, value, usage)
+	return t
+}
+
+// Int64 defines an int64 option with specified
+// name, default value, and usage string. The argument p points to a int64
+// variable in which to store the value of the option.
+func (ps *PropSet) Int64Var(
+	p *int64,
+	name string,
+	value int64,
+	usage string,
+) {
+	ps.Var(option.NewInt64(value, p), name, usage)
+}
+
+// Int64 defines a slice of int64 option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of int64 variable that stores the value of the option.
+func (ps *PropSet) Int64Slice(
+	name string,
+	value []int64,
+	usage string,
+) *[]int64 {
+	t := new([]int64)
+	ps.Int64SliceVar(t, name, value, usage)
+	return t
+}
+
+// Int64SliceVar defines a slice of int64 option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of int64 variable in which to store the value of the option.
+func (ps *PropSet) Int64SliceVar(
+	p *[]int64,
+	name string,
+	value []int64,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Int64 defines an int64 property with
+// specified name, default value, and usage string. The return value is the
+// address of an int64 variable that stores the value of
+// the property.
+func Int64(name string, value int64, usage string) *int64 {
+	return CommandLine.Int64(name, value, usage)
+}
+
+// Int64Var defines an int64 property with
+// specified name, default value, and usage string. The argument p points to
+// an int64 variable in which to store the value of the
+// property.
+func Int64Var(p *int64, name string, value int64, usage string) {
+	CommandLine.Var(option.NewInt64(value, p), name, usage)
+}
+
+// Int64Slice defines a slice of int64 property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of int64 variable that stores the value of
+// the property.
+func Int64Slice(name string, value []int64, usage string) *[]int64 {
+	return CommandLine.Int64Slice(name, value, usage)
+}
+
+// Int64SliceVar defines a slice of int64 property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of int64 variable in which to store the value of the
+// property.
+func Int64SliceVar(p *[]int64, name string, value []int64, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Duration defines a time.Duration option with specified
+// name, default value, and usage string. The return value is the address of
+// a time.Duration variable that stores the value of the option.
+func (ps *PropSet) Duration(
+	name string,
+	value time.Duration,
+	usage string,
+) *time.Duration {
+	t := new(time.Duration)
+	ps.DurationVar(t, name, value, usage)
+	return t
+}
+
+// Duration defines a time.Duration option with specified
+// name, default value, and usage string. The argument p points to a time.Duration
+// variable in which to store the value of the option.
+func (ps *PropSet) DurationVar(
+	p *time.Duration,
+	name string,
+	value time.Duration,
+	usage string,
+) {
+	ps.Var(option.NewDuration(value, p), name, usage)
+}
+
+// Duration defines a slice of time.Duration option with specified
+// name, default value, and usage string. The return value is the address of
+// a slice of time.Duration variable that stores the value of the option.
+func (ps *PropSet) DurationSlice(
+	name string,
+	value []time.Duration,
+	usage string,
+) *[]time.Duration {
+	t := new([]time.Duration)
+	ps.DurationSliceVar(t, name, value, usage)
+	return t
+}
+
+// DurationSliceVar defines a slice of time.Duration option with specified
+// name, default value, and usage string. The argument p points to a
+// slice of time.Duration variable in which to store the value of the option.
+func (ps *PropSet) DurationSliceVar(
+	p *[]time.Duration,
+	name string,
+	value []time.Duration,
+	usage string,
+) {
+	ps.Var(option.NewSlice(value, p), name, usage)
+}
+
+// Duration defines a time.Duration property with
+// specified name, default value, and usage string. The return value is the
+// address of a time.Duration variable that stores the value of
+// the property.
+func Duration(name string, value time.Duration, usage string) *time.Duration {
+	return CommandLine.Duration(name, value, usage)
+}
+
+// DurationVar defines a time.Duration property with
+// specified name, default value, and usage string. The argument p points to
+// a time.Duration variable in which to store the value of the
+// property.
+func DurationVar(p *time.Duration, name string, value time.Duration, usage string) {
+	CommandLine.Var(option.NewDuration(value, p), name, usage)
+}
+
+// DurationSlice defines a slice of time.Duration property with
+// specified name, default value, and usage string. The return value is the
+// address of a slice of time.Duration variable that stores the value of
+// the property.
+func DurationSlice(name string, value []time.Duration, usage string) *[]time.Duration {
+	return CommandLine.DurationSlice(name, value, usage)
+}
+
+// DurationSliceVar defines a slice of time.Duration property with
+// specified name, default value, and usage string. The argument p points to
+// a slice of time.Duration variable in which to store the value of the
+// property.
+func DurationSliceVar(p *[]time.Duration, name string, value []time.Duration, usage string) {
+	CommandLine.Var(option.NewSlice(value, p), name, usage)
 }
 
 // PrintDefaults prints, to standard error unless configured otherwise,
@@ -230,103 +725,18 @@ func UnquoteUsage(optValue option.Value, optUsage string) (name string, usage st
 	return
 }
 
-// Bool defines a bool property with specified name, default value, and usage
-// string. The return value is the address of a bool variable that stores the
-// value of the property.
-func Bool(name string, value bool, usage string) *bool {
-	return CommandLine.Bool(name, value, usage)
-}
-
-// BoolVar defines a bool property with specified name, default value, and usage string.
-// The argument p points to a bool variable in which to store the value of the property.
-func BoolVar(p *bool, name string, value bool, usage string) {
-	CommandLine.Var(option.NewBool(value, p), name, usage)
-}
-
-// Int defines an int property with specified name, default value, and usage string.
-// The return value is the address of an int variable that stores the value of the property.
-func Int(name string, value int, usage string) *int {
-	return CommandLine.Int(name, value, usage)
-}
-
-// IntVar defines an int property with specified name, default value, and usage string.
-// The argument p points to an int variable in which to store the value of the property.
-func IntVar(p *int, name string, value int, usage string) {
-	CommandLine.Var(option.NewInt(value, p), name, usage)
-}
-
-// Int64 defines an int64 property with specified name, default value, and usage string.
-// The return value is the address of an int64 variable that stores the value of the property.
-func Int64(name string, value int64, usage string) *int64 {
-	return CommandLine.Int64(name, value, usage)
-}
-
-// Int64Var defines an int64 property with specified name, default value, and usage string.
-// The argument p points to an int64 variable in which to store the value of the property.
-func Int64Var(p *int64, name string, value int64, usage string) {
-	CommandLine.Var(option.NewInt64(value, p), name, usage)
-}
-
-// Uint defines an uint property with specified name, default value, and usage string.
-// The return value is the address of an uint variable that stores the value of the property.
-func Uint(name string, value uint, usage string) *uint {
-	return CommandLine.Uint(name, value, usage)
-}
-
-// UintVar defines an uint property with specified name, default value, and usage string.
-// The argument p points to an uint variable in which to store the value of the property.
-func UintVar(p *uint, name string, value uint, usage string) {
-	CommandLine.Var(option.NewUint(value, p), name, usage)
-}
-
-// Uint64 defines an uint64 property with specified name, default value, and usage string.
-// The return value is the address of an uint64 variable that stores the value of the property.
-func Uint64(name string, value uint64, usage string) *uint64 {
-	return CommandLine.Uint64(name, value, usage)
-}
-
-// Uint64Var defines an uint64 property with specified name, default value, and usage string.
-// The argument p points to an uint64 variable in which to store the value of the property.
-func Uint64Var(p *uint64, name string, value uint64, usage string) {
-	CommandLine.Var(option.NewUint64(value, p), name, usage)
-}
-
-// String defines a string property with specified name, default value, and usage string.
-// The return value is the address of a string variable that stores the value of the property.
-func String(name string, value string, usage string) *string {
-	return CommandLine.String(name, value, usage)
-}
-
-// StringVar defines a string property with specified name, default value, and usage string.
-// The argument p points to a string variable in which to store the value of the property.
-func StringVar(p *string, name string, value string, usage string) {
-	CommandLine.Var(option.NewString(value, p), name, usage)
-}
-
-// Float64 defines a float64 property with specified name, default value, and usage string.
-// The return value is the address of a float64 variable that stores the value of the property.
-func Float64(name string, value float64, usage string) *float64 {
-	return CommandLine.Float64(name, value, usage)
-}
-
-// Float64Var defines a float64 property with specified name, default value, and usage string.
-// The argument p points to a float64 variable in which to store the value of the property.
-func Float64Var(p *float64, name string, value float64, usage string) {
-	CommandLine.Var(option.NewFloat64(value, p), name, usage)
-}
-
-// Duration defines a time.Duration property with specified name, default value, and usage string.
-// The return value is the address of a time.Duration variable that stores the value of the property.
-// The property accepts a value acceptable to time.ParseDuration.
-func Duration(name string, value time.Duration, usage string) *time.Duration {
-	return CommandLine.Duration(name, value, usage)
-}
-
-// DurationVar defines a time.Duration property with specified name, default value, and usage string.
-// The argument p points to a time.Duration variable in which to store the value of the property.
-// The property accepts a value acceptable to time.ParseDuration.
-func DurationVar(p *time.Duration, name string, value time.Duration, usage string) {
-	CommandLine.Var(option.NewDuration(value, p), name, usage)
+// TextVar defines an option with a specified name, default value, and usage
+// string. The argument p must be a pointer to a variable that will hold the
+// value of the option, and p must implement encoding.TextUnmarshal. If the
+// option is used, the option value will be passed to p's UnmarshalText
+// method. The type of the default value must be the same as the type of p.
+func (ps *PropSet) TextVar(
+	p encoding.TextUnmarshaler,
+	name string,
+	value encoding.TextMarshaler,
+	usage string,
+) {
+	ps.Var(option.NewText(value, p), name, usage)
 }
 
 // TextVar defines a property with a specified name, default value, and usage string.
@@ -334,7 +744,12 @@ func DurationVar(p *time.Duration, name string, value time.Duration, usage strin
 // of the property, and p must implement encoding.TextUnmarshaler.
 // If the property is used, the property value will be passed to p's UnmarshalText method.
 // The type of the default value must be the same as the type of p.
-func TextVar(p encoding.TextUnmarshaler, name string, value encoding.TextMarshaler, usage string) {
+func TextVar(
+	p encoding.TextUnmarshaler,
+	name string,
+	value encoding.TextMarshaler,
+	usage string,
+) {
 	CommandLine.Var(option.NewText(value, p), name, usage)
 }
 
@@ -354,4 +769,12 @@ func Var(value option.Value, name string, usage string) {
 // treated as a value parsing error.
 func Func(name, usage string, fn func(string) error) {
 	CommandLine.Func(name, usage, fn)
+}
+
+// Func defines a property with the specified name and
+// usage string. Each time the property is seen, fn is called with the
+// value of the property. If fn returns a non-nil error, it will be
+// treated as a value parsing error.
+func (ps *PropSet) Func(name, usage string, fn func(string) error) {
+	ps.Var(option.Func(fn), name, usage)
 }
