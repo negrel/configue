@@ -3,6 +3,7 @@ package option
 import (
 	"encoding"
 	"encoding/csv"
+	"slices"
 	"strings"
 	"time"
 )
@@ -11,15 +12,28 @@ import (
 
 // NewSlice creates a new slice value.
 func NewSlice[T any](val []T, p *[]T) *Slice[T] {
-	*p = val
-	return (*Slice[T])(p)
+	*p = slices.Clone(val)
+	return &Slice[T]{
+		data:      p,
+		isDefined: false,
+	}
 }
 
 // Slice is a wrapper around []T that implements Value. *T MUST implement Value
 // otherwise Slice.Set / Slice.String will panic at runtime.
-type Slice[T any] []T
+type Slice[T any] struct {
+	data *[]T
+	// True if Set has already been called once.
+	isDefined bool
+}
 
+// Set implements Value.
 func (s *Slice[T]) Set(str string) error {
+	if !s.isDefined {
+		s.isDefined = true
+		*s.data = nil
+	}
+
 	r := csv.NewReader(strings.NewReader(str))
 	record, err := r.Read()
 	if err != nil {
@@ -64,22 +78,23 @@ func (s *Slice[T]) Set(str string) error {
 			return err
 		}
 
-		*s = append(*s, t)
+		*s.data = append(*s.data, t)
 	}
 
 	return nil
 }
 
+// String implements Value.
 func (s *Slice[T]) String() string {
-	if s == nil || *s == nil {
+	if s == nil || s.data == nil || *s.data == nil {
 		return ""
 	}
 
 	var b strings.Builder
 	w := csv.NewWriter(&b)
 
-	strs := make([]string, len(*s))
-	for _, t := range *s {
+	strs := make([]string, len(*s.data))
+	for _, t := range *s.data {
 		var (
 			str  string
 			tAny any = &t
