@@ -52,6 +52,9 @@ func (p *parser) trimSpace() {
 }
 
 func (p *parser) bytes() []byte {
+	if len(p.buf) <= p.col {
+		return nil
+	}
 	return p.buf[p.col:]
 }
 

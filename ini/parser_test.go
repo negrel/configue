@@ -92,6 +92,13 @@ b ; foo`,
 			},
 		},
 		{
+			name:  "EscapedQuote",
+			input: `foo=\"`,
+			output: [][2]string{
+				{"foo", `\"`},
+			},
+		},
+		{
 			name:  "MutlipleSections",
 			input: "[section]\n  foo=bar\n2.foo=baz\n[.inner]\nbaz=qux\n[]\nroot=true",
 			output: [][2]string{
@@ -160,4 +167,14 @@ b ; foo`,
 			}
 		})
 	}
+}
+
+func FuzzParser(f *testing.F) {
+	f.Add("[section]\nkey=value\n")
+	f.Add("[section]\nkey1=value1\nkey2=value2\n")
+
+	f.Fuzz(func(t *testing.T, val string) {
+		p := newParser(strings.NewReader("foo=" + val))
+		_, _, _ = p.parseNext()
+	})
 }
