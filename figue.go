@@ -103,7 +103,9 @@ func (f *Figue) PrintDefaults() {
 	for i := len(f.backends) - 1; i >= 0; i-- {
 		b := f.backends[i]
 		b.PrintDefaults()
-		_, _ = fmt.Fprintln(f.Output())
+		if i != 0 {
+			_, _ = fmt.Fprintln(f.Output())
+		}
 	}
 }
 
