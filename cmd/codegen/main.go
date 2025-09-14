@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 	"fmt"
 	"os"
 	"text/template"
@@ -25,7 +26,12 @@ type Params struct {
 func main() {
 	params := Params{}
 
-	figue := configue.New("", configue.ContinueOnError, configue.NewFlag())
+	figue := configue.New(
+		"",
+		configue.ContinueOnError,
+		configue.NewEnv("CODEGEN"),
+		configue.NewFlag(),
+	)
 	figue.StringVar(&params.Package, "package", "",
 		"go package name of generated code")
 	figue.StringVar(&params.OptionArticle, "option.article", "",
@@ -41,6 +47,9 @@ func main() {
 
 	err := figue.Parse()
 	if err != nil {
+		if err == flag.ErrHelp {
+			return
+		}
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
