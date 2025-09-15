@@ -257,6 +257,16 @@ func TestEnvSet(t *testing.T) {
 	})
 }
 
+func FuzzEnvSet(f *testing.F) {
+	f.Add("FOO=BAR")
+	f.Add("FOO=BAR\\0BAR=BAZ")
+
+	f.Fuzz(func(t *testing.T, environ string) {
+		var es EnvSet
+		_ = es.Parse(strings.Split(environ, "\\0"))
+	})
+}
+
 type mockTextVar struct {
 	str string
 	err error
